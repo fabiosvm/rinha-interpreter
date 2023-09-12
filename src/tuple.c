@@ -1,0 +1,26 @@
+//
+// tuple.c
+//
+
+#include "tuple.h"
+#include <stdio.h>
+#include "memory.h"
+
+Tuple *tuple_new(Value first, Value second, Result *result)
+{
+  Tuple *tuple = memory_alloc(sizeof(*tuple), result);
+  if (!result_is_ok(result))
+    return NULL;
+  tuple->first = first;
+  tuple->second = second;
+  return tuple;
+}
+
+void tuple_print(Tuple *tuple)
+{
+  printf("(");
+  value_print(tuple->first);
+  printf(", ");
+  value_print(tuple->second);
+  printf(")");
+}

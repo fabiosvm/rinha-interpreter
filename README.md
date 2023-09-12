@@ -7,8 +7,10 @@ Esse projeto é um interpretador para a AST gerada pelo compilador [https://gith
 
 A fim de priorizar velocidade de execução, sem perder a simplicidade na implementação, o interpretador usará o seguinte:
 
-- Máquina baseada em pilha com registradores (como Lua)
-- Tagged unions para representar valores (64 bits o slot)
+- Compilador de um único passo (sem otimizações)
+- Interpretador de bytecode
+- Máquina baseada em pilha
+- Tagged unions para representar valores
 - Alocador de memória simples (Bump Allocator)
 
 ## Requisitos

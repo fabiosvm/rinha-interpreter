@@ -12,4 +12,19 @@ else()
 endif()
 
 add_executable(${PROJECT_NAME}
-  src/main.c)
+  src/array.c
+  src/callstack.c
+  src/chunk.c
+  src/closure.c
+  src/compiler.c
+  src/dump.c
+  src/function.c
+  src/main.c
+  src/memory.c
+  src/result.c
+  src/scanner.c
+  src/stack.c
+  src/str.c
+  src/tuple.c
+  src/value.c
+  src/vm.c)

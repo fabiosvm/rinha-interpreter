@@ -2,14 +2,19 @@
 // main.c
 //
 
-#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/stat.h>
 #include "compiler.h"
 #include "str.h"
 
+#ifdef _WIN32
+  #define stat _stat
+#endif
+
 static inline void print_usage(const char *name);
 static inline Str *read_file(const char *filename);
+static inline int file_size(const char *filename);
 static inline FILE *open_file(const char *filename);
 
 static inline void print_usage(const char *name)
@@ -19,9 +24,7 @@ static inline void print_usage(const char *name)
 
 static inline Str *read_file(const char *filename)
 {
-  FILE *fp = open_file(filename);
-  assert(!fseek(fp, 0, SEEK_END));
-  long length = ftell(fp);
+  int length = file_size(filename);
   Result result;
   result_ok(&result);
   Str *str = str_alloc(length, &result);
@@ -30,10 +33,22 @@ static inline Str *read_file(const char *filename)
     fprintf(stderr, "fatal error: %s\n", result.error);
     exit(EXIT_FAILURE);
   }
-  rewind(fp);
-  assert((int) fread(str->chars, 1, length, fp) == length);
-  assert(!fclose(fp));
+  FILE *fp = open_file(filename);
+  if (fread(str->chars, length, 1, fp) != 1)
+  {
+    fprintf(stderr, "fatal error: could not read file '%s'\n", filename);
+    exit(EXIT_FAILURE);
+  }
+  (void) fclose(fp);
   return str;
+}
+
+static inline int file_size(const char *filename)
+{
+  struct stat st;
+  if (!stat(filename, &st))
+    return st.st_size;
+  return -1;
 }
 
 static inline FILE *open_file(const char *filename)
@@ -73,6 +88,6 @@ int main(int argc, char *argv[])
     exit(EXIT_FAILURE);
   }
   (void) cl;
-  printf("Syntax OK\n");
+  printf("syntax ok\n");
   return EXIT_SUCCESS;
 }

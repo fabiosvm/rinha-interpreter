@@ -9,22 +9,22 @@
 
 typedef enum
 {
-  TOKEN_EOF,
-  TOKEN_COMMA,
-  TOKEN_COLON,
-  TOKEN_LBRACKET,
-  TOKEN_RBRACKET,
-  TOKEN_LBRACE,
-  TOKEN_RBRACE,
-  TOKEN_INT,
-  TOKEN_STRING,
-  TOKEN_FALSE_KW,
-  TOKEN_TRUE_KW
-} TokenType;
+  TOKEN_KIND_EOF,
+  TOKEN_KIND_COMMA,
+  TOKEN_KIND_COLON,
+  TOKEN_KIND_LBRACKET,
+  TOKEN_KIND_RBRACKET,
+  TOKEN_KIND_LBRACE,
+  TOKEN_KIND_RBRACE,
+  TOKEN_KIND_INT,
+  TOKEN_KIND_STRING,
+  TOKEN_KIND_FALSE_KW,
+  TOKEN_KIND_TRUE_KW
+} TokenKind;
 
 typedef struct
 {
-  TokenType type;
+  TokenKind kind;
   int line;
   int col;
   int length;

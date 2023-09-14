@@ -5,7 +5,7 @@
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "scanner.h"
+#include "compiler.h"
 #include "str.h"
 
 static inline void print_usage(const char *name);
@@ -66,23 +66,13 @@ int main(int argc, char *argv[])
   Str *str = read_file(argv[1]);
   Result result;
   result_ok(&result);
-  Scanner scan;
-  scanner_init(&scan, str->chars, &result);
+  Closure *cl = compile(str->chars, &result);
   if (!result_is_ok(&result))
   {
     fprintf(stderr, "fatal error: %s\n", result.error);
     exit(EXIT_FAILURE);
   }
-  while (scan.token.type != TOKEN_EOF)
-  {
-    printf("%d:%d: %.*s\n", scan.token.line, scan.token.col,
-      scan.token.length, scan.token.start);
-    scanner_next_token(&scan, &result);
-    if (!result_is_ok(&result))
-    {
-      fprintf(stderr, "fatal error: %s\n", result.error);
-      exit(EXIT_FAILURE);
-    }
-  }
+  (void) cl;
+  printf("Syntax OK\n");
   return EXIT_SUCCESS;
 }

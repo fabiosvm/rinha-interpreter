@@ -11,10 +11,12 @@
 typedef struct Function
 {
   int arity;
+  int numNonlocals;
   Chunk chunk;
   Array constants;
   Array functions;
-  int numNonlocals;
 } Function;
+
+Function *function_new(int arity, int numNonlocals, Result *result);
 
 #endif // FUNCTION_H

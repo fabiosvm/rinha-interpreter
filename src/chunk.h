@@ -6,6 +6,9 @@
 #define CHUNK_H
 
 #include <stdint.h>
+#include "result.h"
+
+#define CHUNK_MIN_CAPACITY (1 << 3)
 
 typedef enum
 {
@@ -43,5 +46,9 @@ typedef struct
   int count;
   uint8_t *code;
 } Chunk;
+
+void chunk_init(Chunk *chunk, Result *result);
+void chunk_emit_byte(Chunk *chunk, uint8_t byte, Result *result);
+void chunk_emit_word(Chunk *chunk, uint16_t word, Result *result);
 
 #endif // CHUNK_H

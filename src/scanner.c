@@ -65,7 +65,7 @@ static inline bool match_int(Scanner *scan)
     ++n;
   if (isalnum(char_at(scan, n)) || char_at(scan, n) == '_')
     return false;
-  scan->token.type = TOKEN_INT;
+  scan->token.kind = TOKEN_KIND_INT;
   scan->token.line = scan->line;
   scan->token.col = scan->col;
   scan->token.length = n;
@@ -93,7 +93,7 @@ static inline bool match_string(Scanner *scan, Result *result)
     }
     ++n;
   }
-  scan->token.type = TOKEN_STRING;
+  scan->token.kind = TOKEN_KIND_STRING;
   scan->token.line = scan->line;
   scan->token.col = scan->col;
   scan->token.length = n - 2;
@@ -131,37 +131,37 @@ void scanner_next_token(Scanner *scan, Result *result)
   skip_spaces(scan);
   if (match_char(scan, 0))
   {
-    scan->token.type = TOKEN_EOF;
+    scan->token.kind = TOKEN_KIND_EOF;
     return;
   }
   if (match_char(scan, ','))
   {
-    scan->token.type = TOKEN_COMMA;
+    scan->token.kind = TOKEN_KIND_COMMA;
     return;
   }
   if (match_char(scan, ':'))
   {
-    scan->token.type = TOKEN_COLON;
+    scan->token.kind = TOKEN_KIND_COLON;
     return;
   }
   if (match_char(scan, '['))
   {
-    scan->token.type = TOKEN_LBRACKET;
+    scan->token.kind = TOKEN_KIND_LBRACKET;
     return;
   }
   if (match_char(scan, ']'))
   {
-    scan->token.type = TOKEN_RBRACKET;
+    scan->token.kind = TOKEN_KIND_RBRACKET;
     return;
   }
   if (match_char(scan, '{'))
   {
-    scan->token.type = TOKEN_LBRACE;
+    scan->token.kind = TOKEN_KIND_LBRACE;
     return;
   }
   if (match_char(scan, '}'))
   {
-    scan->token.type = TOKEN_RBRACE;
+    scan->token.kind = TOKEN_KIND_RBRACE;
     return;
   }
   if (match_int(scan))
@@ -170,12 +170,12 @@ void scanner_next_token(Scanner *scan, Result *result)
     return;
   if (match_keyword(scan, "false"))
   {
-    scan->token.type = TOKEN_FALSE_KW;
+    scan->token.kind = TOKEN_KIND_FALSE_KW;
     return;
   }
   if (match_keyword(scan, "true"))
   {
-    scan->token.type = TOKEN_TRUE_KW;
+    scan->token.kind = TOKEN_KIND_TRUE_KW;
     return;
   }
   char c = isprint(current_char(scan)) ? current_char(scan) : '?';

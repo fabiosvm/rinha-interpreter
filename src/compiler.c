@@ -321,7 +321,7 @@ static inline void compile_term(Compiler *comp, Result *result)
     goto end;
   }
   // "Bool" ,
-  // "value" Bool
+  // "value" : Bool
   if (!strncmp(kind.start, "Bool", 4))
   {
     consume(scan, TOKEN_KIND_COMMA, result);

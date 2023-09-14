@@ -1,0 +1,122 @@
+
+file          ::= '{'
+                      '"name"' ':' STRING ','
+                      '"expression"' ':' term ','
+                      '"location"' ':' location
+                  '}'
+
+term          ::= int
+                | str
+                | call
+                | binary
+                | function
+                | let
+                | if
+                | print
+                | first
+                | second
+                | bool
+                | tuple
+                | var
+
+location      ::= '{'
+                      '"start"' ':' INT ','
+                      '"end"' ':' INT ','
+                      '"filename"' ':' STRING
+                  '}'
+
+int           ::= '{'
+                      '"kind"' ':' '"Int"' ','
+                      '"value"' ':' INT ','
+                      '"location"' ':' location
+                  '}'
+
+str           ::= '{'
+                      '"kind"' ':' '"Str"' ','
+                      '"value"' ':' STRING ','
+                      '"location"' ':' location
+                  '}'
+
+call          ::= '{'
+                      '"kind"' ':' '"Call"' ','
+                      '"callee"' ':' term ','
+                      '"arguments"' ':' '[' ( term ( ',' term )* )? ']' ','
+                      '"location"' ':' location
+                  '}'
+
+binary        ::= '{'
+                      '"kind"' ':' '"Binary"' ','
+                      '"lhs"' ':' term ','
+                      '"op"' ':' binary_op ','
+                      '"rhs"' ':' term ','
+                      '"location"' ':' location
+                  '}'
+
+binary_op     ::= '"Add"' | '"Sub"' | '"Mul"' | '"Div"' | '"Rem"'
+                | '"Eq"'  | '"Neq"' | '"Lt"'  | '"Gt"'  | '"Lte"'
+                | '"Gte"' | '"And"' | '"Or"'
+
+function      ::= '{'
+                      '"kind"' ':' '"Function"' ','
+                      '"parameters"' ':' '[' ( parameter ( ',' parameter )* )? ']' ','
+                      '"value"' ':' term ','
+                      '"location"' ':' location
+                  '}'
+
+parameter     ::= '{'
+                      '"text"' ':' STRING ','
+                      '"location"' ':' location
+                  '}'
+
+let            ::= '{'
+                      '"kind"' ':' '"Let"' ','
+                      '"name"' ':' parameter ','
+                      '"value"' ':' term ','
+                      '"next"' ':' term ','
+                      '"location"' ':' location
+                  '}'
+
+if            ::= '{'
+                      '"kind"' ':' '"If"' ','
+                      '"condition"' ':' term ','
+                      '"then"' ':' term ','
+                      '"otherwise"' ':' term ','
+                      '"location"' ':' location
+                  '}'
+
+print         ::= '{'
+                      '"kind"' ':' '"Print"' ','
+                      '"value"' ':' term ','
+                      '"location"' ':' location
+                  '}'
+
+first         ::= '{'
+                      '"kind"' ':' '"First"' ','
+                      '"value"' ':' term ','
+                      '"location"' ':' location
+                  '}'
+
+second        ::= '{'
+                      '"kind"' ':' '"Second"' ','
+                      '"value"' ':' term ','
+                      '"location"' ':' location
+                  '}'
+
+bool          ::= '{'
+                      '"kind"' ':' '"Bool"' ','
+                      '"value"' ':' ( 'false' | 'true' ) ','
+                      '"location"' ':' location
+                  '}'
+
+tuple         ::= '{'
+                      '"kind"' ':' '"Tuple"' ','
+                      '"first"' ':' term ','
+                      '"second"' ':' term ','
+                      '"location"' ':' location
+                  '}'
+
+var           ::= '{'
+                      '"kind"' ':' '"Var"' ','
+                      '"text"' ':' STRING ','
+                      '"location"' ':' location
+                  '}'

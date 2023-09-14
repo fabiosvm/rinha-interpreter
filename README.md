@@ -3,6 +3,8 @@
 
 Esse projeto é um interpretador para a AST gerada pelo compilador [https://github.com/aripiprazole/rinha-de-compiler](https://github.com/aripiprazole/rinha-de-compiler).
 
+> **Aviso:** Esse projeto é um trabalho em andamento. No momento, o interpretador é capaz apenas de verificar a sintaxe da AST gerada pelo `rinha-de-compiler`.
+
 ## Estratégias de implementação
 
 A fim de priorizar velocidade de execução, sem perder a simplicidade na implementação, o interpretador usará o seguinte:
@@ -12,6 +14,7 @@ A fim de priorizar velocidade de execução, sem perder a simplicidade na implem
 - Máquina baseada em pilha
 - Tagged unions para representar valores
 - Alocador de memória simples (Bump Allocator)
+- Tail call dispatching (+ switch opcional)
 
 ## Requisitos
 

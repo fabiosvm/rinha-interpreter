@@ -5,6 +5,8 @@
 #ifndef DUMP_H
 #define DUMP_H
 
-#include <stddef.h>
+#include "function.h"
+
+void dump(Function *fn);
 
 #endif // DUMP_H

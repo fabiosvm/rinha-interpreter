@@ -7,6 +7,6 @@
 
 #include "closure.h"
 
-Closure *compile(char *source, Result *result);
+Closure *compile(char *source, bool emit, Result *result);
 
 #endif // COMPILER_H

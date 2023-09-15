@@ -3,9 +3,131 @@
 //
 
 #include "dump.h"
+#include <stdio.h>
 
-void dump(Function *fn)
+void dump_function(Function *fn)
 {
-  // TODO: Implement this function.
-  (void) fn;
+  Chunk *chunk = &fn->chunk;
+  uint8_t *code = chunk->code;
+  int i = 0;
+  while (i < chunk->count)
+  {
+    OpCode op = (OpCode) code[i];
+    printf("%5d ", i);
+    ++i;
+    switch (op)
+    {
+    case OP_NOP:
+      printf("NOP\n");
+      break;
+    case OP_FALSE:
+      printf("FALSE\n");
+      break;
+    case OP_TRUE:
+      printf("TRUE\n");
+      break;
+    case OP_CONSTANT:
+      {
+        int index = code[i];
+        ++i;
+        printf("CONSTANT      %5d\n", index);
+      }
+      break;
+    case OP_TUPLE:
+      printf("TUPLE\n");
+      break;
+    case OP_CLOSURE:
+      printf("CLOSURE\n");
+      break;
+    case OP_LOCAL:
+      {
+        int index = code[i];
+        ++i;
+        printf("LOCAL         %5d\n", index);
+      }
+      break;
+    case OP_NONLOCAL:
+      {
+        int index = code[i];
+        ++i;
+        printf("NONLOCAL      %5d\n", index);
+      }
+      break;
+    case OP_ADD:
+      printf("ADD\n");
+      break;
+    case OP_SUB:
+      printf("SUB\n");
+      break;
+    case OP_MUL:
+      printf("MUL\n");
+      break;
+    case OP_DIV:
+      printf("DIV\n");
+      break;
+    case OP_REM:
+      printf("REM\n");
+      break;
+    case OP_EQ:
+      printf("EQ\n");
+      break;
+    case OP_NEQ:
+      printf("NEQ\n");
+      break;
+    case OP_LT:
+      printf("LT\n");
+      break;
+    case OP_GT:
+      printf("GT\n");
+      break;
+    case OP_LTE:
+      printf("LTE\n");
+      break;
+    case OP_GTE:
+      printf("GTE\n");
+      break;
+    case OP_AND:
+      printf("AND\n");
+      break;
+    case OP_OR:
+      printf("OR\n");
+      break;
+    case OP_JUMP:
+      {
+        int offset = *((uint16_t*) &code[i]);
+        i += 2;
+        printf("JUMP          %5d\n", offset);
+      }
+      break;
+    case OP_JUMP_IF_FALSE:
+      {
+        int offset = *((uint16_t*) &code[i]);
+        i += 2;
+        printf("JUMP_IF_FALSE %5d\n", offset);
+      }
+      break;
+    case OP_FIRST:
+      printf("FIRST\n");
+      break;
+    case OP_SECOND:
+      printf("SECOND\n");
+      break;
+    case OP_PRINT:
+      printf("PRINT\n");
+      break;
+    case OP_CALL:
+      {
+        int nargs = code[i];
+        ++i;
+        printf("CALL          %5d\n", nargs);
+      }
+      break;
+    case OP_RETURN:
+      printf("RETURN\n");
+      break;
+    case OP_HALT:
+      printf("HALT\n");
+      break;
+    }
+  }
 }

@@ -7,6 +7,6 @@
 
 #include "function.h"
 
-void dump(Function *fn);
+void dump_function(Function *fn);
 
 #endif // DUMP_H

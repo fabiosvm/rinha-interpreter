@@ -13,7 +13,7 @@ static inline void grow(Array *arr, Result *result)
   if (arr->count < arr->capacity)
     return;
   int capacity = arr->capacity << 1;
-  Opaque *elements = memory_alloc(sizeof(*elements) * capacity, result);
+  Value *elements = memory_alloc(sizeof(*elements) * capacity, result);
   if (!result_is_ok(result))
     return;
   memcpy(elements, arr->elements, sizeof(*elements) * arr->count);
@@ -24,7 +24,7 @@ static inline void grow(Array *arr, Result *result)
 void array_init(Array *arr, Result *result)
 {
   int capacity = ARRAY_MIN_CAPACITY;
-  Opaque *elements = memory_alloc(sizeof(*elements) * capacity, result);
+  Value *elements = memory_alloc(sizeof(*elements) * capacity, result);
   if (!result_is_ok(result))
     return;
   arr->capacity = capacity;
@@ -32,11 +32,11 @@ void array_init(Array *arr, Result *result)
   arr->elements = elements;
 }
 
-void array_inplace_add(Array *arr, Opaque elem, Result *result)
+void array_inplace_add(Array *arr, Value val, Result *result)
 {
   grow(arr, result);
   if (!result_is_ok(result))
     return;
-  arr->elements[arr->count] = elem;
+  arr->elements[arr->count] = val;
   ++arr->count;
 }

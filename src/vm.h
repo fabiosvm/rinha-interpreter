@@ -14,6 +14,7 @@ typedef struct
   Callstack cstack;
 } VM;
 
-void vm_init(VM *vm, int stackSize, int callstackSize, Result *result);
+void vm_init(VM *vm, int stackSize, int cstackSize, Result *result);
+void vm_run(VM *vm, Closure *cl, Result *result);
 
 #endif // VM_H

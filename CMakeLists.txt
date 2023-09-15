@@ -1,7 +1,7 @@
 
 cmake_minimum_required(VERSION 3.15)
 
-project(rinha)
+project(rinha LANGUAGES C VERSION 1.0.0)
 
 set(CMAKE_C_STANDARD 11)
 

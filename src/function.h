@@ -8,15 +8,25 @@
 #include "array.h"
 #include "chunk.h"
 
+struct Function;
+
+typedef struct Closure
+{
+  int capacity;
+  int count;
+  struct Function **elements;
+} FunctionArray;
+
 typedef struct Function
 {
   int arity;
   int numNonlocals;
   Chunk chunk;
   Array constants;
-  Array functions;
+  FunctionArray children;
 } Function;
 
 Function *function_new(int arity, int numNonlocals, Result *result);
+void function_inplace_add_child(Function *fn, Function *child, Result *result);
 
 #endif // FUNCTION_H

@@ -1,0 +1,86 @@
+{
+  "name": "examples/arithmetic.rinha",
+  "expression": {
+    "kind": "Let",
+    "name": {
+      "text": "x",
+      "location": {
+        "start": 4,
+        "end": 5,
+        "filename": "examples/arithmetic.rinha"
+      }
+    },
+    "value": {
+      "kind": "Binary",
+      "lhs": {
+        "kind": "Binary",
+        "lhs": {
+          "kind": "Int",
+          "value": 1,
+          "location": {
+            "start": 9,
+            "end": 10,
+            "filename": "examples/arithmetic.rinha"
+          }
+        },
+        "op": "Add",
+        "rhs": {
+          "kind": "Int",
+          "value": 2,
+          "location": {
+            "start": 13,
+            "end": 14,
+            "filename": "examples/arithmetic.rinha"
+          }
+        },
+        "location": {
+          "start": 9,
+          "end": 14,
+          "filename": "examples/arithmetic.rinha"
+        }
+      },
+      "op": "Mul",
+      "rhs": {
+        "kind": "Int",
+        "value": 3,
+        "location": {
+          "start": 18,
+          "end": 19,
+          "filename": "examples/arithmetic.rinha"
+        }
+      },
+      "location": {
+        "start": 8,
+        "end": 19,
+        "filename": "examples/arithmetic.rinha"
+      }
+    },
+    "next": {
+      "kind": "Print",
+      "value": {
+        "kind": "Var",
+        "text": "x",
+        "location": {
+          "start": 27,
+          "end": 28,
+          "filename": "examples/arithmetic.rinha"
+        }
+      },
+      "location": {
+        "start": 21,
+        "end": 29,
+        "filename": "examples/arithmetic.rinha"
+      }
+    },
+    "location": {
+      "start": 0,
+      "end": 29,
+      "filename": "examples/arithmetic.rinha"
+    }
+  },
+  "location": {
+    "start": 0,
+    "end": 29,
+    "filename": "examples/arithmetic.rinha"
+  }
+}

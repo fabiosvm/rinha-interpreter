@@ -1,0 +1,84 @@
+{
+  "name": "examples/branching.rinha",
+  "expression": {
+    "kind": "Let",
+    "name": {
+      "text": "x",
+      "location": {
+        "start": 4,
+        "end": 5,
+        "filename": "examples/branching.rinha"
+      }
+    },
+    "value": {
+      "kind": "Bool",
+      "value": true,
+      "location": {
+        "start": 8,
+        "end": 12,
+        "filename": "examples/branching.rinha"
+      }
+    },
+    "next": {
+      "kind": "If",
+      "condition": {
+        "kind": "Var",
+        "text": "x",
+        "location": {
+          "start": 18,
+          "end": 19,
+          "filename": "examples/branching.rinha"
+        }
+      },
+      "then": {
+        "kind": "Print",
+        "value": {
+          "kind": "Str",
+          "value": "truthy",
+          "location": {
+            "start": 31,
+            "end": 39,
+            "filename": "examples/branching.rinha"
+          }
+        },
+        "location": {
+          "start": 25,
+          "end": 40,
+          "filename": "examples/branching.rinha"
+        }
+      },
+      "otherwise": {
+        "kind": "Print",
+        "value": {
+          "kind": "Str",
+          "value": "falsy",
+          "location": {
+            "start": 58,
+            "end": 65,
+            "filename": "examples/branching.rinha"
+          }
+        },
+        "location": {
+          "start": 52,
+          "end": 66,
+          "filename": "examples/branching.rinha"
+        }
+      },
+      "location": {
+        "start": 14,
+        "end": 68,
+        "filename": "examples/branching.rinha"
+      }
+    },
+    "location": {
+      "start": 0,
+      "end": 68,
+      "filename": "examples/branching.rinha"
+    }
+  },
+  "location": {
+    "start": 0,
+    "end": 68,
+    "filename": "examples/branching.rinha"
+  }
+}

@@ -15,3 +15,10 @@ void callstack_init(Callstack *cstack, int size, Result *result)
   cstack->top = &frames[-1];
   cstack->end = &frames[size - 1];
 }
+
+CallFrame callstack_pop(Callstack *cstack)
+{
+  CallFrame frame = cstack->top[0];
+  --cstack->top;
+  return frame;
+}

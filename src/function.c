@@ -46,7 +46,7 @@ Function *function_new(int arity, int numNonlocals, Result *result)
   array_init(&fn->constants, result);
   if (!result_is_ok(result))
     return NULL;
-  array_function_init(&fn->children, result);
+  array_function_init(&fn->functions, result);
   if (!result_is_ok(result))
     return NULL;
   return fn;
@@ -54,7 +54,7 @@ Function *function_new(int arity, int numNonlocals, Result *result)
 
 void function_inplace_add_child(Function *fn, Function *child, Result *result)
 {
-  FunctionArray *arr = &fn->children;
+  FunctionArray *arr = &fn->functions;
   array_function_grow(arr, result);
   if (!result_is_ok(result))
     return;

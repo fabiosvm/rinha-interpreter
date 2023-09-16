@@ -1,0 +1,122 @@
+{
+  "name": "examples/function.rinha",
+  "expression": {
+    "kind": "Let",
+    "name": {
+      "text": "f",
+      "location": {
+        "start": 4,
+        "end": 5,
+        "filename": "examples/function.rinha"
+      }
+    },
+    "value": {
+      "kind": "Function",
+      "parameters": [
+        {
+          "text": "x",
+          "location": {
+            "start": 12,
+            "end": 13,
+            "filename": "examples/function.rinha"
+          }
+        },
+        {
+          "text": "y",
+          "location": {
+            "start": 15,
+            "end": 16,
+            "filename": "examples/function.rinha"
+          }
+        }
+      ],
+      "value": {
+        "kind": "Print",
+        "value": {
+          "kind": "Binary",
+          "lhs": {
+            "kind": "Var",
+            "text": "x",
+            "location": {
+              "start": 31,
+              "end": 32,
+              "filename": "examples/function.rinha"
+            }
+          },
+          "op": "Add",
+          "rhs": {
+            "kind": "Var",
+            "text": "y",
+            "location": {
+              "start": 35,
+              "end": 36,
+              "filename": "examples/function.rinha"
+            }
+          },
+          "location": {
+            "start": 31,
+            "end": 36,
+            "filename": "examples/function.rinha"
+          }
+        },
+        "location": {
+          "start": 25,
+          "end": 37,
+          "filename": "examples/function.rinha"
+        }
+      },
+      "location": {
+        "start": 8,
+        "end": 39,
+        "filename": "examples/function.rinha"
+      }
+    },
+    "next": {
+      "kind": "Call",
+      "callee": {
+        "kind": "Var",
+        "text": "f",
+        "location": {
+          "start": 41,
+          "end": 42,
+          "filename": "examples/function.rinha"
+        }
+      },
+      "arguments": [
+        {
+          "kind": "Int",
+          "value": 1,
+          "location": {
+            "start": 43,
+            "end": 44,
+            "filename": "examples/function.rinha"
+          }
+        },
+        {
+          "kind": "Int",
+          "value": 2,
+          "location": {
+            "start": 46,
+            "end": 47,
+            "filename": "examples/function.rinha"
+          }
+        }
+      ],
+      "location": {
+        "start": 41,
+        "end": 48,
+        "filename": "examples/function.rinha"
+      }
+    },
+    "location": {
+      "start": 0,
+      "end": 48,
+      "filename": "examples/function.rinha"
+    }
+  },
+  "location": {
+    "start": 0,
+    "end": 48,
+    "filename": "examples/function.rinha"
+  }
+}

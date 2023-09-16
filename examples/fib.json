@@ -1,17 +1,25 @@
 {
-  "name": "files/fib.rinha",
+  "name": "examples/fib.rinha",
   "expression": {
     "kind": "Let",
     "name": {
       "text": "fib",
-      "location": { "start": 4, "end": 7, "filename": "files/fib.rinha" }
+      "location": {
+        "start": 4,
+        "end": 7,
+        "filename": "examples/fib.rinha"
+      }
     },
     "value": {
       "kind": "Function",
       "parameters": [
         {
           "text": "n",
-          "location": { "start": 14, "end": 15, "filename": "files/fib.rinha" }
+          "location": {
+            "start": 14,
+            "end": 15,
+            "filename": "examples/fib.rinha"
+          }
         }
       ],
       "value": {
@@ -24,7 +32,7 @@
             "location": {
               "start": 28,
               "end": 29,
-              "filename": "files/fib.rinha"
+              "filename": "examples/fib.rinha"
             }
           },
           "op": "Lt",
@@ -34,15 +42,23 @@
             "location": {
               "start": 32,
               "end": 33,
-              "filename": "files/fib.rinha"
+              "filename": "examples/fib.rinha"
             }
           },
-          "location": { "start": 28, "end": 33, "filename": "files/fib.rinha" }
+          "location": {
+            "start": 28,
+            "end": 33,
+            "filename": "examples/fib.rinha"
+          }
         },
         "then": {
           "kind": "Var",
           "text": "n",
-          "location": { "start": 41, "end": 42, "filename": "files/fib.rinha" }
+          "location": {
+            "start": 41,
+            "end": 42,
+            "filename": "examples/fib.rinha"
+          }
         },
         "otherwise": {
           "kind": "Binary",
@@ -54,7 +70,7 @@
               "location": {
                 "start": 58,
                 "end": 61,
-                "filename": "files/fib.rinha"
+                "filename": "examples/fib.rinha"
               }
             },
             "arguments": [
@@ -66,7 +82,7 @@
                   "location": {
                     "start": 62,
                     "end": 63,
-                    "filename": "files/fib.rinha"
+                    "filename": "examples/fib.rinha"
                   }
                 },
                 "op": "Sub",
@@ -76,20 +92,20 @@
                   "location": {
                     "start": 66,
                     "end": 67,
-                    "filename": "files/fib.rinha"
+                    "filename": "examples/fib.rinha"
                   }
                 },
                 "location": {
                   "start": 62,
                   "end": 67,
-                  "filename": "files/fib.rinha"
+                  "filename": "examples/fib.rinha"
                 }
               }
             ],
             "location": {
               "start": 58,
               "end": 68,
-              "filename": "files/fib.rinha"
+              "filename": "examples/fib.rinha"
             }
           },
           "op": "Add",
@@ -101,7 +117,7 @@
               "location": {
                 "start": 71,
                 "end": 74,
-                "filename": "files/fib.rinha"
+                "filename": "examples/fib.rinha"
               }
             },
             "arguments": [
@@ -113,7 +129,7 @@
                   "location": {
                     "start": 75,
                     "end": 76,
-                    "filename": "files/fib.rinha"
+                    "filename": "examples/fib.rinha"
                   }
                 },
                 "op": "Sub",
@@ -123,27 +139,39 @@
                   "location": {
                     "start": 79,
                     "end": 80,
-                    "filename": "files/fib.rinha"
+                    "filename": "examples/fib.rinha"
                   }
                 },
                 "location": {
                   "start": 75,
                   "end": 80,
-                  "filename": "files/fib.rinha"
+                  "filename": "examples/fib.rinha"
                 }
               }
             ],
             "location": {
               "start": 71,
               "end": 81,
-              "filename": "files/fib.rinha"
+              "filename": "examples/fib.rinha"
             }
           },
-          "location": { "start": 58, "end": 81, "filename": "files/fib.rinha" }
+          "location": {
+            "start": 58,
+            "end": 81,
+            "filename": "examples/fib.rinha"
+          }
         },
-        "location": { "start": 24, "end": 85, "filename": "files/fib.rinha" }
+        "location": {
+          "start": 24,
+          "end": 85,
+          "filename": "examples/fib.rinha"
+        }
       },
-      "location": { "start": 10, "end": 87, "filename": "files/fib.rinha" }
+      "location": {
+        "start": 10,
+        "end": 87,
+        "filename": "examples/fib.rinha"
+      }
     },
     "next": {
       "kind": "Print",
@@ -152,24 +180,44 @@
         "callee": {
           "kind": "Var",
           "text": "fib",
-          "location": { "start": 97, "end": 100, "filename": "files/fib.rinha" }
+          "location": {
+            "start": 96,
+            "end": 99,
+            "filename": "examples/fib.rinha"
+          }
         },
         "arguments": [
           {
             "kind": "Int",
             "value": 10,
             "location": {
-              "start": 101,
-              "end": 103,
-              "filename": "files/fib.rinha"
+              "start": 100,
+              "end": 102,
+              "filename": "examples/fib.rinha"
             }
           }
         ],
-        "location": { "start": 97, "end": 104, "filename": "files/fib.rinha" }
+        "location": {
+          "start": 96,
+          "end": 103,
+          "filename": "examples/fib.rinha"
+        }
       },
-      "location": { "start": 90, "end": 105, "filename": "files/fib.rinha" }
+      "location": {
+        "start": 90,
+        "end": 104,
+        "filename": "examples/fib.rinha"
+      }
     },
-    "location": { "start": 0, "end": 105, "filename": "files/fib.rinha" }
+    "location": {
+      "start": 0,
+      "end": 104,
+      "filename": "examples/fib.rinha"
+    }
   },
-  "location": { "start": 0, "end": 105, "filename": "files/fib.rinha" }
+  "location": {
+    "start": 0,
+    "end": 104,
+    "filename": "examples/fib.rinha"
+  }
 }

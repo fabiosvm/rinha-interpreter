@@ -7,14 +7,22 @@
 
 void dump_function(Function *fn)
 {
+  int numNonlocals = fn->numNonlocals;
+  int numConstants = fn->constants.count;
+  FunctionArray *functions = &fn->functions;
+  int numFunctions = functions->count;
+  printf("; %d parameter(s), %d non-local(s), %d constant(s), %d function(s)\n",
+    fn->arity, numNonlocals, numConstants, numFunctions);
+  int i = 0;
+  int n = 0;
   Chunk *chunk = &fn->chunk;
   uint8_t *code = chunk->code;
-  int i = 0;
   while (i < chunk->count)
   {
     OpCode op = (OpCode) code[i];
     printf("%5d ", i);
     ++i;
+    ++n;
     switch (op)
     {
     case OP_NOP:
@@ -37,7 +45,11 @@ void dump_function(Function *fn)
       printf("TUPLE\n");
       break;
     case OP_CLOSURE:
-      printf("CLOSURE\n");
+      {
+        int index = code[i];
+        ++i;
+        printf("CLOSURE       %5d\n", index);
+      }
       break;
     case OP_LOCAL:
       {
@@ -130,4 +142,7 @@ void dump_function(Function *fn)
       break;
     }
   }
+  printf("; %d instruction(s)\n\n", n);
+  for (int j = 0; j < numFunctions; ++j)
+    dump_function(functions->elements[j]);
 }

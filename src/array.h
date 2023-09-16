@@ -5,13 +5,11 @@
 #ifndef ARRAY_H
 #define ARRAY_H
 
-#include "result.h"
 #include "value.h"
 
 #define ARRAY_MIN_CAPACITY (1 << 3)
 
-#define array_is_empty(a) (!(a)->count)
-#define array_get(a, i)   ((a)->elements[(i)])
+#define array_get(a, i) ((a)->elements[(i)])
 
 typedef struct
 {

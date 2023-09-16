@@ -23,7 +23,7 @@ typedef struct Function
   int numNonlocals;
   Chunk chunk;
   Array constants;
-  FunctionArray children;
+  FunctionArray functions;
 } Function;
 
 Function *function_new(int arity, int numNonlocals, Result *result);

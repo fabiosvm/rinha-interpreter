@@ -1,0 +1,68 @@
+{
+  "name": "examples/logical_and.rinha",
+  "expression": {
+    "kind": "Let",
+    "name": {
+      "text": "x",
+      "location": {
+        "start": 4,
+        "end": 5,
+        "filename": "examples/logical_and.rinha"
+      }
+    },
+    "value": {
+      "kind": "Binary",
+      "lhs": {
+        "kind": "Bool",
+        "value": true,
+        "location": {
+          "start": 8,
+          "end": 12,
+          "filename": "examples/logical_and.rinha"
+        }
+      },
+      "op": "And",
+      "rhs": {
+        "kind": "Bool",
+        "value": true,
+        "location": {
+          "start": 16,
+          "end": 20,
+          "filename": "examples/logical_and.rinha"
+        }
+      },
+      "location": {
+        "start": 8,
+        "end": 20,
+        "filename": "examples/logical_and.rinha"
+      }
+    },
+    "next": {
+      "kind": "Print",
+      "value": {
+        "kind": "Var",
+        "text": "x",
+        "location": {
+          "start": 28,
+          "end": 29,
+          "filename": "examples/logical_and.rinha"
+        }
+      },
+      "location": {
+        "start": 22,
+        "end": 30,
+        "filename": "examples/logical_and.rinha"
+      }
+    },
+    "location": {
+      "start": 0,
+      "end": 30,
+      "filename": "examples/logical_and.rinha"
+    }
+  },
+  "location": {
+    "start": 0,
+    "end": 30,
+    "filename": "examples/logical_and.rinha"
+  }
+}

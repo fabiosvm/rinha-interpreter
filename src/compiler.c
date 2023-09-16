@@ -47,7 +47,7 @@ typedef struct
 typedef struct Compiler
 {
   struct Compiler *parent;
-  Scanner scan;
+  Scanner *scan;
   bool emit;
   int numVariables;
   uint8_t nextIndex;
@@ -63,7 +63,7 @@ static inline void add_variable(Compiler *comp, Token *token, bool isLocal, uint
 static inline Variable *lookup_variable(Compiler *comp, Token *token);
 static inline int emit_jump(Compiler *comp, OpCode op, Result *result);
 static inline void patch_jump(Compiler *comp, int offset, Result *result);
-static inline void compiler_init(Compiler *comp, Compiler *parent, char *source, bool emit,
+static inline void compiler_init(Compiler *comp, Compiler *parent, Scanner *scan, bool emit,
   Result *result);
 static inline void compile_file(Compiler *comp, Result *result);
 static inline void compile_term(Compiler *comp, Result *result);
@@ -172,25 +172,23 @@ static inline void patch_jump(Compiler *comp, int offset, Result *result)
   *((uint16_t *) &chunk->code[offset]) = (uint16_t) jump;
 }
 
-static inline void compiler_init(Compiler *comp, Compiler *parent, char *source, bool emit,
+static inline void compiler_init(Compiler *comp, Compiler *parent, Scanner *scan, bool emit,
   Result *result)
 {
   Function *fn = function_new(0, 0, result);
   if (!result_is_ok(result))
     return;
   comp->parent = parent;
-  scanner_init(&comp->scan, source, result);
-  if (!result_is_ok(result))
-    return;
+  comp->scan = scan;
   comp->emit = emit;
   comp->numVariables = 0;
-  comp->nextIndex = 0;
+  comp->nextIndex = 1;
   comp->fn = fn;
 }
 
 static inline void compile_file(Compiler *comp, Result *result)
 {
-  Scanner *scan = &comp->scan;
+  Scanner *scan = comp->scan;
   // {
   consume(scan, TOKEN_KIND_LBRACE, result);
   // "name" : String ,
@@ -221,7 +219,7 @@ static inline void compile_file(Compiler *comp, Result *result)
 
 static inline void compile_term(Compiler *comp, Result *result)
 {
-  Scanner *scan = &comp->scan;
+  Scanner *scan = comp->scan;
   // {
   consume(scan, TOKEN_KIND_LBRACE, result);
   // "kind" : String
@@ -312,7 +310,7 @@ static inline void compile_term(Compiler *comp, Result *result)
 
 static inline void compile_location(Compiler *comp, Result *result)
 {
-  Scanner *scan = &comp->scan;
+  Scanner *scan = comp->scan;
   // {
   consume(scan, TOKEN_KIND_LBRACE, result);
   // "start" : 	Int ,
@@ -341,7 +339,7 @@ static inline void compile_location(Compiler *comp, Result *result)
 
 static inline void compile_int(Compiler *comp, Result *result)
 {
-  Scanner *scan = &comp->scan;
+  Scanner *scan = comp->scan;
   // ,
   // "value" : Int ,
   // "location" : Location
@@ -374,7 +372,7 @@ static inline void compile_int(Compiler *comp, Result *result)
 
 static inline void compile_str(Compiler *comp, Result *result)
 {
-  Scanner *scan = &comp->scan;
+  Scanner *scan = comp->scan;
   // ,
   // "value" : String ,
   // "location" : Location
@@ -410,7 +408,7 @@ static inline void compile_str(Compiler *comp, Result *result)
 
 static inline void compile_call(Compiler *comp, Result *result)
 {
-  Scanner *scan = &comp->scan;
+  Scanner *scan = comp->scan;
   // , "callee" : Term ,
   // "arguments" : [ Term , ... ] ,
   // "location" : Location
@@ -464,7 +462,7 @@ end:
 
 static inline void compile_binary(Compiler *comp, Result *result)
 {
-  Scanner *scan = &comp->scan;
+  Scanner *scan = comp->scan;
   // ,
   // "lhs" : Term ,
   // "op" : ( "Add" | "Sub" | "Mul" | "Div" | "Rem" | "Eq" | "Neq" | "Lt" | "Gt" | "Lte" | "Gte" | "And" | "Or" ) ,
@@ -534,7 +532,7 @@ static inline void compile_binary(Compiler *comp, Result *result)
 
 static inline void compile_function(Compiler *comp, Result *result)
 {
-  Scanner *scan = &comp->scan;
+  Scanner *scan = comp->scan;
   // ,
   // "parameters" : [ Parameter , ... ] ,
   // "value" : Term ,
@@ -544,32 +542,35 @@ static inline void compile_function(Compiler *comp, Result *result)
   consume_string(scan, "parameters", result);
   consume(scan, TOKEN_KIND_COLON, result);
   consume(scan, TOKEN_KIND_LBRACKET, result);
-  uint8_t arity = 0;
+  Compiler childComp;
+  bool emit = comp->emit;
+  compiler_init(&childComp, comp, scan, emit, result);
+  if (!result_is_ok(result))
+    return;
   if (match(scan, TOKEN_KIND_RBRACKET))
   {
     next_token(scan, result);
     goto end;
   }
-  compile_parameter(comp, result);
+  compile_parameter(&childComp, result);
   if (!result_is_ok(result))
     return;
-  ++arity;
+  uint8_t arity = 1;
   while (!match(scan, TOKEN_KIND_RBRACKET))
   {
     consume(scan, TOKEN_KIND_COMMA, result);
-    compile_parameter(comp, result);
+    compile_parameter(&childComp, result);
     if (!result_is_ok(result))
       return;
     ++arity;
   }
   consume(scan, TOKEN_KIND_RBRACKET, result);
-  // TODO: Add child function.
-  (void) arity;
+  childComp.fn->arity = arity;
 end:
   consume(scan, TOKEN_KIND_COMMA, result);
   consume_string(scan, "value", result);
   consume(scan, TOKEN_KIND_COLON, result);
-  compile_term(comp, result);
+  compile_term(&childComp, result);
   if (!result_is_ok(result))
     return;
   consume(scan, TOKEN_KIND_COMMA, result);
@@ -579,10 +580,15 @@ end:
   if (!result_is_ok(result))
     return;
   consume(scan, TOKEN_KIND_RBRACE, result);
-  if (comp->emit)
+  if (emit)
   {
-    // TODO: Emit proper instruction.
-    uint8_t index = 0;
+    chunk_emit_byte(&childComp.fn->chunk, OP_RETURN, result);
+    if (!result_is_ok(result))
+      return;
+    uint8_t index = (uint8_t) comp->fn->functions.count;
+    function_inplace_add_child(comp->fn, childComp.fn, result);
+    if (!result_is_ok(result))
+      return;
     Chunk *chunk = &comp->fn->chunk;
     chunk_emit_byte(chunk, OP_CLOSURE, result);
     if (!result_is_ok(result))
@@ -593,7 +599,7 @@ end:
 
 static inline void compile_parameter(Compiler *comp, Result *result)
 {
-  Scanner *scan = &comp->scan;
+  Scanner *scan = comp->scan;
   // {
   consume(scan, TOKEN_KIND_LBRACE, result);
   // "text" : String ,
@@ -615,7 +621,7 @@ static inline void compile_parameter(Compiler *comp, Result *result)
 
 static inline void compile_let(Compiler *comp, Result *result)
 {
-  Scanner *scan = &comp->scan;
+  Scanner *scan = comp->scan;
   // ,
   // "name" : Parameter ,
   // "value" : Term ,
@@ -651,7 +657,7 @@ static inline void compile_let(Compiler *comp, Result *result)
 
 static inline void compile_if(Compiler *comp, Result *result)
 {
-  Scanner *scan = &comp->scan;
+  Scanner *scan = comp->scan;
   //  ,
   // "condition" : Term ,
   // "then" : Term ,
@@ -713,7 +719,7 @@ static inline void compile_if(Compiler *comp, Result *result)
 
 static inline void compile_print(Compiler *comp, Result *result)
 {
-  Scanner *scan = &comp->scan;
+  Scanner *scan = comp->scan;
   // ,
   // "value" : Term ,
   // "location" : Location
@@ -737,7 +743,7 @@ static inline void compile_print(Compiler *comp, Result *result)
 
 static inline void compile_first(Compiler *comp, Result *result)
 {
-  Scanner *scan = &comp->scan;
+  Scanner *scan = comp->scan;
   // ,
   // "value" : Term ,
   // "location" : Location
@@ -761,7 +767,7 @@ static inline void compile_first(Compiler *comp, Result *result)
 
 static inline void compile_second(Compiler *comp, Result *result)
 {
-  Scanner *scan = &comp->scan;
+  Scanner *scan = comp->scan;
   // ,
   // "value" : Term ,
   // "location" : Location
@@ -785,7 +791,7 @@ static inline void compile_second(Compiler *comp, Result *result)
 
 static inline void compile_bool(Compiler *comp, Result *result)
 {
-  Scanner *scan = &comp->scan;
+  Scanner *scan = comp->scan;
   // ,
   // "value" : Bool ,
   // "location" : Location
@@ -822,7 +828,7 @@ static inline void compile_bool(Compiler *comp, Result *result)
 
 static inline void compile_tuple(Compiler *comp, Result *result)
 {
-  Scanner *scan = &comp->scan;
+  Scanner *scan = comp->scan;
   // ,
   // "first" : Term ,
   // "second" : Term ,
@@ -853,7 +859,7 @@ static inline void compile_tuple(Compiler *comp, Result *result)
 
 static inline void compile_var(Compiler *comp, Result *result)
 {
-  Scanner *scan = &comp->scan;
+  Scanner *scan = comp->scan;
   // ,
   // "text" : String ,
   // "location" : Location
@@ -889,8 +895,12 @@ static inline void compile_var(Compiler *comp, Result *result)
 
 Closure *compile(char *source, bool emit, Result *result)
 {
+  Scanner scan;
+  scanner_init(&scan, source, result);
+  if (!result_is_ok(result))
+    return NULL;
   Compiler comp;
-  compiler_init(&comp, NULL, source, emit, result);
+  compiler_init(&comp, NULL, &scan, emit, result);
   if (!result_is_ok(result))
     return NULL;
   compile_file(&comp, result);

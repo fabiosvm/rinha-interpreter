@@ -5,19 +5,17 @@
 #ifndef STACK_H
 #define STACK_H
 
-#include "result.h"
 #include "value.h"
 
 #define STACK_DEFAULT_SIZE (1 << 10)
 
-#define stack_is_empty(s) ((s)->top == &(s)->slots[-1])
-#define stack_is_full(s)  ((s)->top == (s)->end)
-#define stack_peek(s, i)  ((s)->top[-(i)])
+#define stack_is_full(s) ((s)->top == (s)->end)
+#define stack_peek(s, i) ((s)->top[-(i)])
 
 #define stack_push(s, v) \
   do { \
     ++(s)->top; \
-    (s)->slots[(s)->top] = (v); \
+    (s)->top[0] = (v); \
   } while (0)
 
 #define stack_pop(s) \
@@ -27,7 +25,7 @@
 
 #define stack_set(s, i, v) \
   do { \
-    (s)->slots[(i)] = (v); \
+    (s)->top[-(i)] = (v); \
   } while (0)
 
 typedef struct

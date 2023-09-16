@@ -9,11 +9,13 @@
 #include "compiler.h"
 #include "dump.h"
 #include "str.h"
+#include "vm.h"
 
 #ifdef _WIN32
   #define stat _stat
 #endif
 
+static inline void panic(Result *result);
 static inline void print_usage(const char *name);
 static inline void version(void);
 static inline void check(const char *filename);
@@ -22,6 +24,12 @@ static inline void run(const char *filename);
 static inline Str *read_file(const char *filename);
 static inline int file_size(const char *filename);
 static inline FILE *open_file(const char *filename);
+
+static inline void panic(Result *result)
+{
+  fprintf(stderr, "panic: %s\n", result->error);
+  exit(EXIT_FAILURE);
+}
 
 static inline void print_usage(const char *name)
 {
@@ -48,10 +56,7 @@ static inline void check(const char *filename)
   result_ok(&result);
   (void) compile(str->chars, false, &result);
   if (!result_is_ok(&result))
-  {
-    fprintf(stderr, "fatal error: %s\n", result.error);
-    exit(EXIT_FAILURE);
-  }
+    panic(&result);
   printf("syntax ok\n");
 }
 
@@ -62,17 +67,25 @@ static inline void dump(const char *filename)
   result_ok(&result);
   Closure *cl = compile(str->chars, true, &result);
   if (!result_is_ok(&result))
-  {
-    fprintf(stderr, "fatal error: %s\n", result.error);
-    exit(EXIT_FAILURE);
-  }
+    panic(&result);
   dump_function(cl->fn);
 }
 
 static inline void run(const char *filename)
 {
-  // TODO: Implement this function.
-  (void) filename;
+  Str *str = read_file(filename);
+  Result result;
+  result_ok(&result);
+  Closure *cl = compile(str->chars, true, &result);
+  if (!result_is_ok(&result))
+    panic(&result);
+  VM vm;
+  vm_init(&vm, STACK_DEFAULT_SIZE, CALLSTACK_DEFAULT_SIZE, &result);
+  if (!result_is_ok(&result))
+    panic(&result);
+  vm_run(&vm, cl, &result);
+  if (!result_is_ok(&result))
+    panic(&result);
 }
 
 static inline Str *read_file(const char *filename)
@@ -82,10 +95,7 @@ static inline Str *read_file(const char *filename)
   result_ok(&result);
   Str *str = str_alloc(length, &result);
   if (!result_is_ok(&result))
-  {
-    fprintf(stderr, "fatal error: %s\n", result.error);
-    exit(EXIT_FAILURE);
-  }
+    panic(&result);
   FILE *fp = open_file(filename);
   if (fread(str->chars, length, 1, fp) != 1)
   {

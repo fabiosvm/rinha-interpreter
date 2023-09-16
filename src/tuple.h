@@ -5,7 +5,6 @@
 #ifndef TUPLE_H
 #define TUPLE_H
 
-#include "result.h"
 #include "value.h"
 
 typedef struct
@@ -15,6 +14,7 @@ typedef struct
 } Tuple;
 
 Tuple *tuple_new(Value first, Value second, Result *result);
+bool tuple_equal(Tuple *tuple1, Tuple *tuple2);
 void tuple_print(Tuple *tuple);
 
 #endif // TUPLE_H

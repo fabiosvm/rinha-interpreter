@@ -45,7 +45,7 @@ O projeto está sendo desenvolvido em etapas. A seguir, a lista de etapas já co
 - [x] Scanner
 - [x] Verificando a sintaxe
 - [x] Gerando o bytecode
-- [ ] Máquina Virtual
+- [x] Máquina Virtual
 
 ## License
 

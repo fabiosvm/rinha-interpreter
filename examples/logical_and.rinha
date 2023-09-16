@@ -1,0 +1,2 @@
+let x = true && true;
+print(x)

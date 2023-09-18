@@ -30,12 +30,21 @@ Execute o seguinte comando para construir o projeto:
 ./build.sh
 ```
 
-## Running
+## Rodando
 
 Depois de construído, o interpretador estará disponível em `build/rinha`. Dessa forma, para executar um programa, basta executar:
 
 ```text
 ./build/rinha run examples/fib.json
+```
+
+## Rodar usando o Docker
+
+Se você não quiser compilar o projeto, pode usar o Docker para executar o interpretador. Para isso, execute os seguintes comandos:
+
+```text
+sudo docker build -t rinha-interpreter .
+sudo docker run -v ./examples/fib.json:/fib.json rinha-interpreter run /fib.json
 ```
 
 ## Road Map

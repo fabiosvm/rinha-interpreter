@@ -51,7 +51,7 @@
               "filename": "examples/variable.rinha"
             }
           },
-          "op": "Add",
+          "op": "Sub",
           "rhs": {
             "kind": "Var",
             "text": "y",

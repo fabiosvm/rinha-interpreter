@@ -46,7 +46,7 @@ typedef struct
 
 typedef struct Compiler
 {
-  struct Compiler *parent;
+  struct Compiler *enclosing;
   Scanner *scan;
   bool emit;
   int numVariables;
@@ -63,7 +63,7 @@ static inline void add_variable(Compiler *comp, Token *token, bool isLocal, uint
 static inline Variable *lookup_variable(Compiler *comp, Token *token);
 static inline int emit_jump(Compiler *comp, OpCode op, Result *result);
 static inline void patch_jump(Compiler *comp, int offset, Result *result);
-static inline void compiler_init(Compiler *comp, Compiler *parent, Scanner *scan, bool emit,
+static inline void compiler_init(Compiler *comp, Compiler *enclosing, Scanner *scan, bool emit,
   Result *result);
 static inline void compile_file(Compiler *comp, Result *result);
 static inline void compile_term(Compiler *comp, Result *result);
@@ -172,13 +172,13 @@ static inline void patch_jump(Compiler *comp, int offset, Result *result)
   *((uint16_t *) &chunk->code[offset]) = (uint16_t) jump;
 }
 
-static inline void compiler_init(Compiler *comp, Compiler *parent, Scanner *scan, bool emit,
+static inline void compiler_init(Compiler *comp, Compiler *enclosing, Scanner *scan, bool emit,
   Result *result)
 {
   Function *fn = function_new(0, 0, result);
   if (!result_is_ok(result))
     return;
-  comp->parent = parent;
+  comp->enclosing = enclosing;
   comp->scan = scan;
   comp->emit = emit;
   comp->numVariables = 0;

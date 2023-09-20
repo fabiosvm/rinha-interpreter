@@ -6,7 +6,9 @@
 #include <stdio.h>
 #include "tuple.h"
 
-#define TAIL_CALL_SWITCH 0
+#ifndef TAIL_CALL_SWITCH
+#define TAIL_CALL_SWITCH 1
+#endif
 
 #if TAIL_CALL_SWITCH
 #define dispatch(vm, cl, ip, s, r) \
@@ -242,8 +244,8 @@ static void do_add(VM *vm, Closure *cl, uint8_t *ip, Value *slots, Result *resul
   Value val2 = stack_peek(stack, 0);
   if (!is_int(val1) || !is_int(val2))
   {
-    result_error(result, "cannot add %s and %s", type_name(val1.type),
-      type_name(val2.type));
+    result_error(result, "cannot add %s and %s", type_name(type(val1)),
+      type_name(type(val2)));
     return;
   }
   int num = as_int(val1) + as_int(val2);
@@ -260,8 +262,8 @@ static void do_sub(VM *vm, Closure *cl, uint8_t *ip, Value *slots, Result *resul
   Value val2 = stack_peek(stack, 0);
   if (!is_int(val1) || !is_int(val2))
   {
-    result_error(result, "cannot subtract %s from %s", type_name(val2.type),
-      type_name(val1.type));
+    result_error(result, "cannot subtract %s from %s", type_name(type(val2)),
+      type_name(type(val1)));
     return;
   }
   int num = as_int(val1) - as_int(val2);
@@ -278,8 +280,8 @@ static void do_mul(VM *vm, Closure *cl, uint8_t *ip, Value *slots, Result *resul
   Value val2 = stack_peek(stack, 0);
   if (!is_int(val1) || !is_int(val2))
   {
-    result_error(result, "cannot multiply %s by %s", type_name(val1.type),
-      type_name(val2.type));
+    result_error(result, "cannot multiply %s by %s", type_name(type(val1)),
+      type_name(type(val2)));
     return;
   }
   int num = as_int(val1) * as_int(val2);
@@ -296,8 +298,8 @@ static void do_div(VM *vm, Closure *cl, uint8_t *ip, Value *slots, Result *resul
   Value val2 = stack_peek(stack, 0);
   if (!is_int(val1) || !is_int(val2))
   {
-    result_error(result, "cannot divide %s by %s", type_name(val1.type),
-      type_name(val2.type));
+    result_error(result, "cannot divide %s by %s", type_name(type(val1)),
+      type_name(type(val2)));
     return;
   }
   int num = as_int(val1) / as_int(val2);
@@ -315,7 +317,7 @@ static void do_rem(VM *vm, Closure *cl, uint8_t *ip, Value *slots, Result *resul
   if (!is_int(val1) || !is_int(val2))
   {
     result_error(result, "cannot calculate remainder of %s and %s",
-      type_name(val1.type), type_name(val2.type));
+      type_name(type(val1)), type_name(type(val2)));
     return;
   }
   int num = as_int(val1) % as_int(val2);
@@ -455,7 +457,7 @@ static void do_first(VM *vm, Closure *cl, uint8_t *ip, Value *slots, Result *res
   Value val = stack_peek(stack, 0);
   if (!is_tuple(val))
   {
-    result_error(result, "cannot get first element of %s", type_name(val.type));
+    result_error(result, "cannot get first element of %s", type_name(type(val)));
     return;
   }
   Tuple *tuple = as_tuple(val);
@@ -470,7 +472,7 @@ static void do_second(VM *vm, Closure *cl, uint8_t *ip, Value *slots, Result *re
   Value val = stack_peek(stack, 0);
   if (!is_tuple(val))
   {
-    result_error(result, "cannot get second element of %s", type_name(val.type));
+    result_error(result, "cannot get second element of %s", type_name(type(val)));
     return;
   }
   Tuple *tuple = as_tuple(val);
@@ -496,7 +498,7 @@ static void do_call(VM *vm, Closure *cl, uint8_t *ip, Value *slots, Result *resu
   Value val = stackSlots[0];
   if (!is_closure(val))
   {
-    result_error(result, "cannot call %s", type_name(val.type));
+    result_error(result, "cannot call %s", type_name(type(val)));
     return;
   }
   Closure *callee = as_closure(val);

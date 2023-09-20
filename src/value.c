@@ -33,10 +33,10 @@ char *type_name(Type type)
 
 bool value_equal(Value val1, Value val2)
 {
-  if (val1.type != val2.type)
+  if (type(val1) != type(val2))
     return false;
   bool isEqual = false;
-  switch (val1.type)
+  switch (type(val1))
   {
   case TYPE_BOOL:
     isEqual = as_bool(val1) == as_bool(val2);
@@ -59,14 +59,14 @@ bool value_equal(Value val1, Value val2)
 
 int value_compare(Value val1, Value val2, Result *result)
 {
-  if (val1.type != val2.type)
+  if (type(val1) != type(val2))
   {
-    result_error(result, "cannot compare %s and %s", type_name(val1.type),
-      type_name(val2.type));
+    result_error(result, "cannot compare %s and %s", type_name(type(val1)),
+      type_name(type(val2)));
     return 0;
   }
   int cmp = 0;
-  switch (val1.type)
+  switch (type(val1))
   {
   case TYPE_BOOL:
     cmp = as_bool(val1) - as_bool(val2);
@@ -79,7 +79,7 @@ int value_compare(Value val1, Value val2, Result *result)
     break;
   case TYPE_TUPLE:
   case TYPE_CLOSURE:
-    result_error(result, "cannot compare %s", type_name(val1.type));
+    result_error(result, "cannot compare %s", type_name(type(val1)));
     break;
   }
   return cmp;
@@ -87,7 +87,7 @@ int value_compare(Value val1, Value val2, Result *result)
 
 void value_print(Value val)
 {
-  switch (val.type)
+  switch (type(val))
   {
   case TYPE_BOOL:
     printf("%s", as_bool(val) ? "true" : "false");

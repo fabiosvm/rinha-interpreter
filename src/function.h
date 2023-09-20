@@ -10,7 +10,7 @@
 
 struct Function;
 
-typedef struct Closure
+typedef struct
 {
   int capacity;
   int count;

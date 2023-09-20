@@ -12,7 +12,7 @@
 #include "vm.h"
 
 #ifdef _WIN32
-  #define stat _stat
+#define stat _stat
 #endif
 
 static inline void panic(Result *result);

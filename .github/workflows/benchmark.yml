@@ -14,7 +14,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - name: Building
-      run: ${{ github.workspace }}/build.sh
-    - name: Measuring time
-      run: time build/rinha run examples/fib.json
+    - name: Rinha
+      run: |
+        ${{ github.workspace }}/build.sh
+        time build/rinha run benchmark/fib.json
+
+    - name: Python3
+      run: |
+        python3 --version
+        time python3 benchmark/fib.py

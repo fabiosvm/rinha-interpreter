@@ -144,43 +144,43 @@
           "kind": "Var",
           "text": "sum",
           "location": {
-            "start": 89,
-            "end": 92,
+            "start": 88,
+            "end": 91,
             "filename": "examples/sum.rinha"
           }
         },
         "arguments": [
           {
             "kind": "Int",
-            "value": 100000,
+            "value": 364888,
             "location": {
-              "start": 93,
-              "end": 99,
+              "start": 92,
+              "end": 98,
               "filename": "examples/sum.rinha"
             }
           }
         ],
         "location": {
-          "start": 89,
-          "end": 100,
+          "start": 88,
+          "end": 99,
           "filename": "examples/sum.rinha"
         }
       },
       "location": {
         "start": 82,
-        "end": 101,
+        "end": 100,
         "filename": "examples/sum.rinha"
       }
     },
     "location": {
       "start": 0,
-      "end": 101,
+      "end": 100,
       "filename": "examples/sum.rinha"
     }
   },
   "location": {
     "start": 0,
-    "end": 101,
+    "end": 100,
     "filename": "examples/sum.rinha"
   }
 }

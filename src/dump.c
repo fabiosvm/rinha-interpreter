@@ -34,6 +34,13 @@ void dump_function(Function *fn)
     case OP_TRUE:
       printf("TRUE\n");
       break;
+    case OP_INT:
+      {
+        int data = *((uint16_t*) &code[i]);
+        i += 2;
+        printf("INT           %5d\n", data);
+      }
+      break;
     case OP_CONSTANT:
       {
         int index = code[i];

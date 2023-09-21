@@ -7,11 +7,14 @@ set(CMAKE_C_STANDARD 11)
 set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
 
 if(MSVC)
-  add_compile_options(/W4 /WX)
-  set(CMAKE_C_FLAGS_RELEASE "/O2")
+  add_compile_options(/W4 /WX /02)
 else()
-  add_compile_options(-Wall -Wextra -Wpedantic -Werror)
-  set(CMAKE_C_FLAGS_RELEASE "-O3")
+  add_compile_options(-Wall -Wextra -Wpedantic -Werror -O3 -foptimize-sibling-calls)
+endif()
+
+if(NOT MSVC)
+  add_compile_options("$<$<CONFIG:Debug>:-fsanitize=address>")
+  add_link_options("$<$<CONFIG:Debug>:-fsanitize=address>")
 endif()
 
 if(NOT APPLE)

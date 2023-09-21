@@ -7,7 +7,7 @@
 
 #include "value.h"
 
-#define STACK_DEFAULT_SIZE (1 << 10)
+#define STACK_DEFAULT_SIZE (1 << 20) /* 1MB */
 
 #define stack_is_full(s) ((s)->top == (s)->end)
 #define stack_peek(s, i) ((s)->top[-(i)])

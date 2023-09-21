@@ -7,7 +7,7 @@
 
 #include "closure.h"
 
-#define CALLSTACK_DEFAULT_SIZE (1 << 10)
+#define CALLSTACK_DEFAULT_SIZE (1 << 20) /* 1MB */
 
 #define callstack_is_full(cs) ((cs)->top == (cs)->end)
 

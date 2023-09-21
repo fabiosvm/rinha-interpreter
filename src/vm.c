@@ -7,7 +7,7 @@
 #include "tuple.h"
 
 #ifndef TAIL_CALL_SWITCH
-#define TAIL_CALL_SWITCH 1
+#define TAIL_CALL_SWITCH 0
 #endif
 
 #if TAIL_CALL_SWITCH
@@ -19,6 +19,7 @@
     case OP_NOP:           do_nop((vm), (cl), (ip), (s), (r));           break; \
     case OP_FALSE:         do_false((vm), (cl), (ip), (s), (r));         break; \
     case OP_TRUE:          do_true((vm), (cl), (ip), (s), (r));          break; \
+    case OP_INT:           do_int((vm), (cl), (ip), (s), (r));           break; \
     case OP_CONSTANT:      do_constant((vm), (cl), (ip), (s), (r));      break; \
     case OP_TUPLE:         do_tuple((vm), (cl), (ip), (s), (r));         break; \
     case OP_CLOSURE:       do_closure((vm), (cl), (ip), (s), (r));       break; \
@@ -64,6 +65,7 @@ static inline void push_frame(VM *vm, Closure *cl, uint8_t *ip, Value *slots, Re
 static void do_nop(VM *vm, Closure *cl, uint8_t *ip, Value *slots, Result *result);
 static void do_false(VM *vm, Closure *cl, uint8_t *ip, Value *slots, Result *result);
 static void do_true(VM *vm, Closure *cl, uint8_t *ip, Value *slots, Result *result);
+static void do_int(VM *vm, Closure *cl, uint8_t *ip, Value *slots, Result *result);
 static void do_constant(VM *vm, Closure *cl, uint8_t *ip, Value *slots, Result *result);
 static void do_tuple(VM *vm, Closure *cl, uint8_t *ip, Value *slots, Result *result);
 static void do_closure(VM *vm, Closure *cl, uint8_t *ip, Value *slots, Result *result);
@@ -95,16 +97,16 @@ static void do_halt(VM *vm, Closure *cl, uint8_t *ip, Value *slots, Result *resu
 typedef void (*InstructionFn)(VM *, Closure *, uint8_t *, Value *, Result *);
 
 static const InstructionFn dispatchTable[] = {
-  [OP_NOP]      = do_nop,      [OP_FALSE]         = do_false,         [OP_TRUE]    = do_true,
-  [OP_CONSTANT] = do_constant, [OP_TUPLE]         = do_tuple,         [OP_CLOSURE] = do_closure,
-  [OP_LOCAL]    = do_local,    [OP_NONLOCAL]      = do_nonlocal,      [OP_ADD]     = do_add,
-  [OP_SUB]      = do_sub,      [OP_MUL]           = do_mul,           [OP_DIV]     = do_div,
-  [OP_REM]      = do_rem,      [OP_EQ]            = do_eq,            [OP_NEQ]     = do_neq,
-  [OP_LT]       = do_lt,       [OP_GT]            = do_gt,            [OP_LTE]     = do_lte,
-  [OP_GTE]      = do_gte,      [OP_AND]           = do_and,           [OP_OR]      = do_or,
-  [OP_JUMP]     = do_jump,     [OP_JUMP_IF_FALSE] = do_jump_if_false, [OP_FIRST]   = do_first,
-  [OP_SECOND]   = do_second,   [OP_PRINT]         = do_print,         [OP_CALL]    = do_call,
-  [OP_RETURN]   = do_return,   [OP_HALT]          = do_halt
+  [OP_NOP]     = do_nop,     [OP_FALSE]    = do_false,    [OP_TRUE]          = do_true,
+  [OP_INT]     = do_int,     [OP_CONSTANT] = do_constant, [OP_TUPLE]         = do_tuple,
+  [OP_CLOSURE] = do_closure, [OP_LOCAL]    = do_local,    [OP_NONLOCAL]      = do_nonlocal,
+  [OP_ADD]     = do_add,     [OP_SUB]      = do_sub,      [OP_MUL]           = do_mul,
+  [OP_DIV]     = do_div,     [OP_REM]      = do_rem,      [OP_EQ]            = do_eq,
+  [OP_NEQ]     = do_neq,     [OP_LT]       = do_lt,       [OP_GT]            = do_gt,
+  [OP_LTE]     = do_lte,     [OP_GTE]      = do_gte,      [OP_AND]           = do_and,
+  [OP_OR]      = do_or,      [OP_JUMP]     = do_jump,     [OP_JUMP_IF_FALSE] = do_jump_if_false,
+  [OP_FIRST]   = do_first,   [OP_SECOND]   = do_second,   [OP_PRINT]         = do_print,
+  [OP_CALL]    = do_call,    [OP_RETURN]   = do_return,   [OP_HALT]          = do_halt
 };
 #endif
 
@@ -163,6 +165,17 @@ static void do_true(VM *vm, Closure *cl, uint8_t *ip, Value *slots, Result *resu
 {
   ++ip;
   push(vm, TRUE_VALUE, result);
+  if (!result_is_ok(result))
+    return;
+  dispatch(vm, cl, ip, slots, result);
+}
+
+static void do_int(VM *vm, Closure *cl, uint8_t *ip, Value *slots, Result *result)
+{
+  ++ip;
+  uint16_t data = read_word(&ip);
+  Value val = int_value(data);
+  push(vm, val, result);
   if (!result_is_ok(result))
     return;
   dispatch(vm, cl, ip, slots, result);

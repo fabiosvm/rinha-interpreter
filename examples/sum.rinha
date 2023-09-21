@@ -6,4 +6,4 @@ let sum = fn (n) => {
   }
 };
 
-print (sum(5))
+print (sum(100000))

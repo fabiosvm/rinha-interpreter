@@ -8,7 +8,7 @@
 #include <stddef.h>
 #include "result.h"
 
-#define MEMORY_SIZE (1 << 29) /* 512 MB */
+#define MEMORY_SIZE (1 << 30) /* 1GB */
 
 void *memory_alloc(size_t size, Result *result);
 

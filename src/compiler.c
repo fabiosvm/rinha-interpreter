@@ -139,7 +139,7 @@ static inline void add_variable(Compiler *comp, Token *token, bool isLocal, uint
 
 static inline void resolve_variable(Compiler *comp, Token *token, Variable *out, Result *result)
 {
-  Variable var;
+  Variable var = { 0 };
   if (lookup_variable(comp, token, &var))
   {
     *out = var;
@@ -389,7 +389,16 @@ static inline void compile_int(Compiler *comp, Result *result)
   if (comp->emit)
   {
     Chunk *chunk = &comp->fn->chunk;
-    Value val = int_value(atoi(value.start));
+    int data = atoi(value.start);
+    if (data <= UINT16_MAX)
+    {
+      chunk_emit_byte(chunk, OP_INT, result);
+      if (!result_is_ok(result))
+        return;
+      chunk_emit_word(chunk, (uint16_t) data, result);
+      return;
+    }
+    Value val = int_value(data);
     uint8_t index = add_constant(comp, val, result);
     if (!result_is_ok(result))
       return;

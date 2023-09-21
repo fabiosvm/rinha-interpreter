@@ -8,6 +8,19 @@
 #include "array.h"
 #include "chunk.h"
 
+typedef struct
+{
+  bool isLocal;
+  uint8_t index;
+} Nonlocal;
+
+typedef struct
+{
+  int capacity;
+  int count;
+  Nonlocal *elements;
+} NonlocalArray;
+
 struct Function;
 
 typedef struct
@@ -20,13 +33,14 @@ typedef struct
 typedef struct Function
 {
   int arity;
-  int numNonlocals;
   Chunk chunk;
   Array constants;
+  NonlocalArray nonlocals;
   FunctionArray functions;
 } Function;
 
-Function *function_new(int arity, int numNonlocals, Result *result);
-void function_inplace_add_child(Function *fn, Function *child, Result *result);
+Function *function_new(int arity, Result *result);
+uint8_t function_add_nonlocal(Function *fn, bool isLocal, uint8_t index, Result *result);
+void function_add_child(Function *fn, Function *child, Result *result);
 
 #endif // FUNCTION_H

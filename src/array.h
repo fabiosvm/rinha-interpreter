@@ -19,6 +19,6 @@ typedef struct
 } Array;
 
 void array_init(Array *arr, Result *result);
-void array_inplace_add(Array *arr, Value val, Result *result);
+void array_add(Array *arr, Value val, Result *result);
 
 #endif // ARRAY_H

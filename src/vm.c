@@ -203,11 +203,16 @@ static void do_closure(VM *vm, Closure *cl, uint8_t *ip, Value *slots, Result *r
   Closure *newClosure = closure_new(fn, result);
   if (!result_is_ok(result))
     return;
-  int n = fn->numNonlocals;
-  Value *stackSlots = &vm->stack.top[1 - n];
-  for (int i = 0; i < n; ++i)
-    newClosure->nonlocals[i] = stackSlots[i];
-  vm->stack.top -= n;
+  int numNonlocals = fn->nonlocals.count;
+  Nonlocal *nonlocals = fn->nonlocals.elements;
+  Value **nonlocalSlots = cl->nonlocals;
+  for (int i = 0; i < numNonlocals; ++i)
+  {
+    Nonlocal *nonlocal = &nonlocals[i];
+    uint8_t nonlocalIndex = nonlocal->index;
+    Value *val = nonlocal->isLocal ? &slots[nonlocalIndex] : nonlocalSlots[nonlocalIndex];
+    newClosure->nonlocals[i] = val;
+  }
   push(vm, closure_value(newClosure), result);
   if (!result_is_ok(result))
     return;
@@ -229,7 +234,7 @@ static void do_nonlocal(VM *vm, Closure *cl, uint8_t *ip, Value *slots, Result *
 {
   ++ip;
   int index = read_byte(&ip);
-  Value val = cl->nonlocals[index];
+  Value val = *(cl->nonlocals[index]);
   push(vm, val, result);
   if (!result_is_ok(result))
     return;
@@ -483,8 +488,7 @@ static void do_second(VM *vm, Closure *cl, uint8_t *ip, Value *slots, Result *re
 static void do_print(VM *vm, Closure *cl, uint8_t *ip, Value *slots, Result *result)
 {
   ++ip;
-  Stack *stack = &vm->stack;
-  Value val = stack_peek(stack, 0);
+  Value val = stack_peek(&vm->stack, 0);
   value_print(val);
   printf("\n");
   dispatch(vm, cl, ip, slots, result);
@@ -517,6 +521,9 @@ static void do_call(VM *vm, Closure *cl, uint8_t *ip, Value *slots, Result *resu
 static void do_return(VM *vm, Closure *cl, uint8_t *ip, Value *slots, Result *result)
 {
   CallFrame frame = callstack_pop(&vm->cstack);
+  Stack *stack = &vm->stack;
+  slots[0] = stack_peek(stack, 0);
+  stack->top = slots;
   cl = frame.cl;
   ip = frame.ip;
   slots = frame.slots;

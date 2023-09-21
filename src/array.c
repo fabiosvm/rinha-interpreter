@@ -32,7 +32,7 @@ void array_init(Array *arr, Result *result)
   arr->elements = elements;
 }
 
-void array_inplace_add(Array *arr, Value val, Result *result)
+void array_add(Array *arr, Value val, Result *result)
 {
   grow(arr, result);
   if (!result_is_ok(result))

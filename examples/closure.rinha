@@ -1,6 +1,8 @@
 let x = 1;
 let f = fn (y) => {
-  let z = x + y;
-  z
+  let g = fn (z) => {
+    x + y + z
+  };
+  g
 };
-print(f(2))
+print(f(2)(3))

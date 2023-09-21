@@ -1,0 +1,168 @@
+{
+  "name": "examples/recursion.rinha",
+  "expression": {
+    "kind": "Let",
+    "name": {
+      "text": "f",
+      "location": {
+        "start": 4,
+        "end": 5,
+        "filename": "examples/recursion.rinha"
+      }
+    },
+    "value": {
+      "kind": "Function",
+      "parameters": [
+        {
+          "text": "x",
+          "location": {
+            "start": 12,
+            "end": 13,
+            "filename": "examples/recursion.rinha"
+          }
+        }
+      ],
+      "value": {
+        "kind": "If",
+        "condition": {
+          "kind": "Binary",
+          "lhs": {
+            "kind": "Var",
+            "text": "x",
+            "location": {
+              "start": 26,
+              "end": 27,
+              "filename": "examples/recursion.rinha"
+            }
+          },
+          "op": "Lt",
+          "rhs": {
+            "kind": "Int",
+            "value": 100,
+            "location": {
+              "start": 30,
+              "end": 33,
+              "filename": "examples/recursion.rinha"
+            }
+          },
+          "location": {
+            "start": 26,
+            "end": 33,
+            "filename": "examples/recursion.rinha"
+          }
+        },
+        "then": {
+          "kind": "Call",
+          "callee": {
+            "kind": "Var",
+            "text": "f",
+            "location": {
+              "start": 41,
+              "end": 42,
+              "filename": "examples/recursion.rinha"
+            }
+          },
+          "arguments": [
+            {
+              "kind": "Binary",
+              "lhs": {
+                "kind": "Var",
+                "text": "x",
+                "location": {
+                  "start": 43,
+                  "end": 44,
+                  "filename": "examples/recursion.rinha"
+                }
+              },
+              "op": "Mul",
+              "rhs": {
+                "kind": "Int",
+                "value": 2,
+                "location": {
+                  "start": 47,
+                  "end": 48,
+                  "filename": "examples/recursion.rinha"
+                }
+              },
+              "location": {
+                "start": 43,
+                "end": 48,
+                "filename": "examples/recursion.rinha"
+              }
+            }
+          ],
+          "location": {
+            "start": 41,
+            "end": 49,
+            "filename": "examples/recursion.rinha"
+          }
+        },
+        "otherwise": {
+          "kind": "Var",
+          "text": "x",
+          "location": {
+            "start": 65,
+            "end": 66,
+            "filename": "examples/recursion.rinha"
+          }
+        },
+        "location": {
+          "start": 22,
+          "end": 70,
+          "filename": "examples/recursion.rinha"
+        }
+      },
+      "location": {
+        "start": 8,
+        "end": 72,
+        "filename": "examples/recursion.rinha"
+      }
+    },
+    "next": {
+      "kind": "Print",
+      "value": {
+        "kind": "Call",
+        "callee": {
+          "kind": "Var",
+          "text": "f",
+          "location": {
+            "start": 80,
+            "end": 81,
+            "filename": "examples/recursion.rinha"
+          }
+        },
+        "arguments": [
+          {
+            "kind": "Int",
+            "value": 1,
+            "location": {
+              "start": 82,
+              "end": 83,
+              "filename": "examples/recursion.rinha"
+            }
+          }
+        ],
+        "location": {
+          "start": 80,
+          "end": 84,
+          "filename": "examples/recursion.rinha"
+        }
+      },
+      "location": {
+        "start": 74,
+        "end": 85,
+        "filename": "examples/recursion.rinha"
+      }
+    },
+    "location": {
+      "start": 0,
+      "end": 85,
+      "filename": "examples/recursion.rinha"
+    }
+  },
+  "location": {
+    "start": 0,
+    "end": 85,
+    "filename": "examples/recursion.rinha"
+  }
+}

@@ -57,10 +57,11 @@ typedef struct Compiler
 
 static inline void result_unexpected_token_error(Result *result, Scanner *scan);
 static inline uint8_t add_constant(Compiler *comp, Value val, Result *result);
-static inline void define_local(Compiler *comp, Token *token, Result *result);
+static inline void add_local(Compiler *comp, Token *token, Result *result);
 static inline void add_variable(Compiler *comp, Token *token, bool isLocal, uint8_t index,
-  Result *result);
-static inline Variable *lookup_variable(Compiler *comp, Token *token);
+  Variable *out, Result *result);
+static inline void resolve_variable(Compiler *comp, Token *token, Variable *out, Result *result);
+static inline bool lookup_variable(Compiler *comp, Token *token, Variable *out);
 static inline int emit_jump(Compiler *comp, OpCode op, Result *result);
 static inline void patch_jump(Compiler *comp, int offset, Result *result);
 static inline void compiler_init(Compiler *comp, Compiler *enclosing, Scanner *scan, bool emit,
@@ -104,47 +105,76 @@ static inline uint8_t add_constant(Compiler *comp, Value val, Result *result)
     result_error(result, "too many constants");
     return 0;
   }
-  array_inplace_add(constants, val, result);
+  array_add(constants, val, result);
   if (!result_is_ok(result))
     return 0;
   return (uint8_t) index;
 }
 
-static inline void define_local(Compiler *comp, Token *token, Result *result)
+static inline void add_local(Compiler *comp, Token *token, Result *result)
 {
-  add_variable(comp, token, true, comp->nextIndex, result);
+  add_variable(comp, token, true, comp->nextIndex, NULL, result);
   if (!result_is_ok(result))
     return;
   ++comp->nextIndex;
 }
 
 static inline void add_variable(Compiler *comp, Token *token, bool isLocal, uint8_t index,
-  Result *result)
+  Variable *out, Result *result)
 {
   if (comp->numVariables > UINT8_MAX)
   {
     result_error(result, "too many variables");
     return;
   }
-  Variable var = {
-    .length = token->length,
-    .start = token->start,
-    .isLocal = isLocal,
-    .index = index
-  };
-  comp->variables[comp->numVariables] = var;
+  Variable *var = &comp->variables[comp->numVariables];
+  var->length = token->length;
+  var->start = token->start;
+  var->isLocal = isLocal;
+  var->index = index;
   ++comp->numVariables;
+  if (out)
+    *out = *var;
 }
 
-static inline Variable *lookup_variable(Compiler *comp, Token *token)
+static inline void resolve_variable(Compiler *comp, Token *token, Variable *out, Result *result)
+{
+  Variable var;
+  if (lookup_variable(comp, token, &var))
+  {
+    *out = var;
+    return;
+  }
+  Compiler *enclosing = comp->enclosing;
+  if (!enclosing)
+  {
+    result_error(result, "variable `%->*s` is used but not defined",
+      token->length, token->start);
+    return;
+  }
+  resolve_variable(enclosing, token, &var, result);
+  if (!result_is_ok(result))
+    return;
+  uint8_t index = function_add_nonlocal(comp->fn, var.isLocal, var.index, result);
+  if (!result_is_ok(result))
+    return;
+  add_variable(comp, token, false, index, &var, result);
+  if (!result_is_ok(result))
+    return;
+  *out = var;
+}
+
+static inline bool lookup_variable(Compiler *comp, Token *token, Variable *out)
 {
   for (int i = comp->numVariables - 1; i > -1; --i)
   {
     Variable *var = &comp->variables[i];
-    if (token->length == var->length && !strncmp(token->start, var->start, token->length))
-      return var;
+    if (token->length != var->length || strncmp(token->start, var->start, token->length))
+      continue;
+    *out = *var;
+    return true;
   }
-  return NULL;
+  return false;
 }
 
 static inline int emit_jump(Compiler *comp, OpCode op, Result *result)
@@ -175,7 +205,7 @@ static inline void patch_jump(Compiler *comp, int offset, Result *result)
 static inline void compiler_init(Compiler *comp, Compiler *enclosing, Scanner *scan, bool emit,
   Result *result)
 {
-  Function *fn = function_new(0, 0, result);
+  Function *fn = function_new(0, result);
   if (!result_is_ok(result))
     return;
   comp->enclosing = enclosing;
@@ -586,7 +616,7 @@ end:
     if (!result_is_ok(result))
       return;
     uint8_t index = (uint8_t) comp->fn->functions.count;
-    function_inplace_add_child(comp->fn, childComp.fn, result);
+    function_add_child(comp->fn, childComp.fn, result);
     if (!result_is_ok(result))
       return;
     Chunk *chunk = &comp->fn->chunk;
@@ -616,7 +646,7 @@ static inline void compile_parameter(Compiler *comp, Result *result)
     return;
   // }
   consume(scan, TOKEN_KIND_RBRACE, result);
-  define_local(comp, &text, result);
+  add_local(comp, &text, result);
 }
 
 static inline void compile_let(Compiler *comp, Result *result)
@@ -876,21 +906,18 @@ static inline void compile_var(Compiler *comp, Result *result)
   if (!result_is_ok(result))
     return;
   consume(scan, TOKEN_KIND_RBRACE, result);
-  Variable *var = lookup_variable(comp, &text);
-  if (!var)
-  {
-    result_error(result, "variable `%.*s` is used but not defined",
-      text.length, text.start);
+  Variable var;
+  resolve_variable(comp, &text, &var, result);
+  if (!result_is_ok(result))
     return;
-  }
-  if (comp->emit)
-  {
-    Chunk *chunk = &comp->fn->chunk;
-    chunk_emit_byte(chunk, OP_LOCAL, result);
-    if (!result_is_ok(result))
-      return;
-    chunk_emit_byte(chunk, var->index, result);
-  }
+  if (!comp->emit)
+    return;
+  Chunk *chunk = &comp->fn->chunk;
+  OpCode op = var.isLocal ? OP_LOCAL : OP_NONLOCAL;
+  chunk_emit_byte(chunk, op, result);
+  if (!result_is_ok(result))
+    return;
+  chunk_emit_byte(chunk, var.index, result);
 }
 
 Closure *compile(char *source, bool emit, Result *result)

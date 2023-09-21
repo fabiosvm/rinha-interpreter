@@ -7,7 +7,7 @@
 
 void dump_function(Function *fn)
 {
-  int numNonlocals = fn->numNonlocals;
+  int numNonlocals = fn->nonlocals.count;
   int numConstants = fn->constants.count;
   FunctionArray *functions = &fn->functions;
   int numFunctions = functions->count;

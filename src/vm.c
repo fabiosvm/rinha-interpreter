@@ -4,6 +4,7 @@
 
 #include "vm.h"
 #include <stdio.h>
+#include "str.h"
 #include "tuple.h"
 
 #ifndef TAIL_CALL_SWITCH
@@ -62,6 +63,9 @@ static inline uint8_t read_byte(uint8_t **ip);
 static inline uint16_t read_word(uint8_t **ip);
 static inline void push(VM *vm, Value val, Result *result);
 static inline void push_frame(VM *vm, Closure *cl, uint8_t *ip, Value *slots, Result *result);
+static inline Str *left_concat(Str *str, Value val, Result *result);
+static inline Str *right_concat(Str *str, Value val, Result *result);
+static inline Str *to_str(Value val, Result *result);
 static void do_nop(VM *vm, Closure *cl, uint8_t *ip, Value *slots, Result *result);
 static void do_false(VM *vm, Closure *cl, uint8_t *ip, Value *slots, Result *result);
 static void do_true(VM *vm, Closure *cl, uint8_t *ip, Value *slots, Result *result);
@@ -144,6 +148,50 @@ static inline void push_frame(VM *vm, Closure *cl, uint8_t *ip, Value *slots, Re
     return;
   }
   callstack_push(cstack, cl, ip, slots);
+}
+
+static inline Str *left_concat(Str *str, Value val, Result *result)
+{
+  Str *leftStr = to_str(val, result);
+  if (!result_is_ok(result))
+    return NULL;
+  Str *newStr = str_concat(leftStr, str, result);
+  if (!result_is_ok(result))
+    return NULL;
+  return newStr;
+}
+
+static inline Str *right_concat(Str *str, Value val, Result *result)
+{
+  Str *rightStr = to_str(val, result);
+  if (!result_is_ok(result))
+    return NULL;
+  Str *newStr = str_concat(str, rightStr, result);
+  if (!result_is_ok(result))
+    return NULL;
+  return newStr;
+}
+
+static inline Str *to_str(Value val, Result *result)
+{
+  if (is_str(val))
+    return as_str(val);
+  if (is_bool(val))
+  {
+    Str *str = str_from_bool(as_bool(val), result);
+    if (!result_is_ok(result))
+      return NULL;
+    return str;
+  }
+  if (is_int(val))
+  {
+    Str *str = str_from_int(as_int(val), result);
+    if (!result_is_ok(result))
+      return NULL;
+    return str;
+  }
+  result_error(result, "cannot convert %s to string", type_name(type(val)));
+  return NULL;
 }
 
 static void do_nop(VM *vm, Closure *cl, uint8_t *ip, Value *slots, Result *result)
@@ -260,14 +308,32 @@ static void do_add(VM *vm, Closure *cl, uint8_t *ip, Value *slots, Result *resul
   Stack *stack = &vm->stack;
   Value val1 = stack_peek(stack, 1);
   Value val2 = stack_peek(stack, 0);
+  Value val3 = { 0 };
+  if (is_str(val1))
+  {
+    Str *str = right_concat(as_str(val1), val2, result);
+    if (!result_is_ok(result))
+      return;
+    val3 = str_value(str);
+    goto end;
+  }
+  if (is_str(val2))
+  {
+    Str *str = left_concat(as_str(val2), val1, result);
+    if (!result_is_ok(result))
+      return;
+    val3 = str_value(str);
+    goto end;
+  }
   if (!is_int(val1) || !is_int(val2))
   {
     result_error(result, "cannot add %s and %s", type_name(type(val1)),
       type_name(type(val2)));
     return;
   }
-  int num = as_int(val1) + as_int(val2);
-  stack_set(stack, 1, int_value(num));
+  val3 = int_value(as_int(val1) + as_int(val2));
+end:
+  stack_set(stack, 1, val3);
   stack_pop(stack);
   dispatch(vm, cl, ip, slots, result);
 }
@@ -430,7 +496,7 @@ static void do_and(VM *vm, Closure *cl, uint8_t *ip, Value *slots, Result *resul
   Stack *stack = &vm->stack;
   Value val1 = stack_peek(stack, 1);
   Value val2 = stack_peek(stack, 0);
-  stack_set(stack, 1, is_falsy(val1) || is_falsy(val2) ? FALSE_VALUE : TRUE_VALUE);
+  stack_set(stack, 1, (is_falsy(val1) || is_falsy(val2)) ? FALSE_VALUE : TRUE_VALUE);
   stack_pop(stack);
   dispatch(vm, cl, ip, slots, result);
 }
@@ -441,7 +507,7 @@ static void do_or(VM *vm, Closure *cl, uint8_t *ip, Value *slots, Result *result
   Stack *stack = &vm->stack;
   Value val1 = stack_peek(stack, 1);
   Value val2 = stack_peek(stack, 0);
-  stack_set(stack, 1, is_falsy(val1) && is_falsy(val2) ? FALSE_VALUE : TRUE_VALUE);
+  stack_set(stack, 1, (is_falsy(val1) && is_falsy(val2)) ? FALSE_VALUE : TRUE_VALUE);
   stack_pop(stack);
   dispatch(vm, cl, ip, slots, result);
 }

@@ -1,0 +1,179 @@
+{
+  "name": "examples/concatenation.rinha",
+  "expression": {
+    "kind": "Let",
+    "name": {
+      "text": "a",
+      "location": {
+        "start": 4,
+        "end": 5,
+        "filename": "examples/concatenation.rinha"
+      }
+    },
+    "value": {
+      "kind": "Bool",
+      "value": true,
+      "location": {
+        "start": 8,
+        "end": 12,
+        "filename": "examples/concatenation.rinha"
+      }
+    },
+    "next": {
+      "kind": "Let",
+      "name": {
+        "text": "b",
+        "location": {
+          "start": 18,
+          "end": 19,
+          "filename": "examples/concatenation.rinha"
+        }
+      },
+      "value": {
+        "kind": "Int",
+        "value": 123,
+        "location": {
+          "start": 22,
+          "end": 25,
+          "filename": "examples/concatenation.rinha"
+        }
+      },
+      "next": {
+        "kind": "Let",
+        "name": {
+          "text": "c",
+          "location": {
+            "start": 31,
+            "end": 32,
+            "filename": "examples/concatenation.rinha"
+          }
+        },
+        "value": {
+          "kind": "Str",
+          "value": "foo",
+          "location": {
+            "start": 35,
+            "end": 40,
+            "filename": "examples/concatenation.rinha"
+          }
+        },
+        "next": {
+          "kind": "Let",
+          "name": {
+            "text": "d",
+            "location": {
+              "start": 46,
+              "end": 47,
+              "filename": "examples/concatenation.rinha"
+            }
+          },
+          "value": {
+            "kind": "Str",
+            "value": "bar",
+            "location": {
+              "start": 50,
+              "end": 55,
+              "filename": "examples/concatenation.rinha"
+            }
+          },
+          "next": {
+            "kind": "Print",
+            "value": {
+              "kind": "Binary",
+              "lhs": {
+                "kind": "Var",
+                "text": "a",
+                "location": {
+                  "start": 63,
+                  "end": 64,
+                  "filename": "examples/concatenation.rinha"
+                }
+              },
+              "op": "Add",
+              "rhs": {
+                "kind": "Binary",
+                "lhs": {
+                  "kind": "Var",
+                  "text": "b",
+                  "location": {
+                    "start": 67,
+                    "end": 68,
+                    "filename": "examples/concatenation.rinha"
+                  }
+                },
+                "op": "Add",
+                "rhs": {
+                  "kind": "Binary",
+                  "lhs": {
+                    "kind": "Var",
+                    "text": "c",
+                    "location": {
+                      "start": 71,
+                      "end": 72,
+                      "filename": "examples/concatenation.rinha"
+                    }
+                  },
+                  "op": "Add",
+                  "rhs": {
+                    "kind": "Var",
+                    "text": "d",
+                    "location": {
+                      "start": 75,
+                      "end": 76,
+                      "filename": "examples/concatenation.rinha"
+                    }
+                  },
+                  "location": {
+                    "start": 71,
+                    "end": 76,
+                    "filename": "examples/concatenation.rinha"
+                  }
+                },
+                "location": {
+                  "start": 67,
+                  "end": 76,
+                  "filename": "examples/concatenation.rinha"
+                }
+              },
+              "location": {
+                "start": 63,
+                "end": 76,
+                "filename": "examples/concatenation.rinha"
+              }
+            },
+            "location": {
+              "start": 57,
+              "end": 77,
+              "filename": "examples/concatenation.rinha"
+            }
+          },
+          "location": {
+            "start": 42,
+            "end": 77,
+            "filename": "examples/concatenation.rinha"
+          }
+        },
+        "location": {
+          "start": 27,
+          "end": 77,
+          "filename": "examples/concatenation.rinha"
+        }
+      },
+      "location": {
+        "start": 14,
+        "end": 77,
+        "filename": "examples/concatenation.rinha"
+      }
+    },
+    "location": {
+      "start": 0,
+      "end": 77,
+      "filename": "examples/concatenation.rinha"
+    }
+  },
+  "location": {
+    "start": 0,
+    "end": 77,
+    "filename": "examples/concatenation.rinha"
+  }
+}

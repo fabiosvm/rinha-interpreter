@@ -1,0 +1,20 @@
+
+name: Benchmark
+
+on:
+  push:
+    branches: [ main ]
+
+  pull_request:
+    branches: [ main ]
+
+jobs:
+
+  ubuntu:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Building
+      run: ${{ github.workspace }}/build.sh
+    - name: Measuring time
+      run: time build/rinha run examples/fib.json

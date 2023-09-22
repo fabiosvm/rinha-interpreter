@@ -141,6 +141,13 @@ void dump_function(Function *fn)
         printf("CALL          %5d\n", nargs);
       }
       break;
+    case OP_TAIL_CALL:
+      {
+        int nargs = code[i];
+        ++i;
+        printf("TAIL_CALL     %5d\n", nargs);
+      }
+      break;
     case OP_RETURN:
       printf("RETURN\n");
       break;

@@ -67,11 +67,11 @@ static inline void patch_jump(Compiler *comp, int offset, Result *result);
 static inline void compiler_init(Compiler *comp, Compiler *enclosing, Scanner *scan, bool emit,
   Result *result);
 static inline void compile_file(Compiler *comp, Result *result);
-static inline void compile_term(Compiler *comp, Result *result);
+static inline void compile_term(Compiler *comp, bool isTail, Result *result);
 static inline void compile_location(Compiler *comp, Result *result);
 static inline void compile_int(Compiler *comp, Result *result);
 static inline void compile_str(Compiler *comp, Result *result);
-static inline void compile_call(Compiler *comp, Result *result);
+static inline void compile_call(Compiler *comp, bool isTail, Result *result);
 static inline void compile_binary(Compiler *comp, Result *result);
 static inline void compile_function(Compiler *comp, Result *result);
 static inline void compile_parameter(Compiler *comp, Result *result);
@@ -231,7 +231,7 @@ static inline void compile_file(Compiler *comp, Result *result)
   // "expression" : Term ,
   consume_string(scan, "expression", result);
   consume(scan, TOKEN_KIND_COLON, result);
-  compile_term(comp, result);
+  compile_term(comp, false, result);
   if (!result_is_ok(result))
     return;
   consume(scan, TOKEN_KIND_COMMA, result);
@@ -247,7 +247,7 @@ static inline void compile_file(Compiler *comp, Result *result)
     chunk_emit_byte(&comp->fn->chunk, OP_HALT, result);
 }
 
-static inline void compile_term(Compiler *comp, Result *result)
+static inline void compile_term(Compiler *comp, bool isTail, Result *result)
 {
   Scanner *scan = comp->scan;
   // {
@@ -272,7 +272,7 @@ static inline void compile_term(Compiler *comp, Result *result)
   // "Call"
   if (!strncmp(kind, "Call", 4))
   {
-    compile_call(comp, result);
+    compile_call(comp, isTail, result);
     return;
   }
   // "Binary" 
@@ -445,7 +445,7 @@ static inline void compile_str(Compiler *comp, Result *result)
   }
 }
 
-static inline void compile_call(Compiler *comp, Result *result)
+static inline void compile_call(Compiler *comp, bool isTail, Result *result)
 {
   Scanner *scan = comp->scan;
   // , "callee" : Term ,
@@ -455,7 +455,7 @@ static inline void compile_call(Compiler *comp, Result *result)
   consume(scan, TOKEN_KIND_COMMA, result);
   consume_string(scan, "callee", result);
   consume(scan, TOKEN_KIND_COLON, result);
-  compile_term(comp, result);
+  compile_term(comp, false, result);
   if (!result_is_ok(result))
     return;
   consume(scan, TOKEN_KIND_COMMA, result);
@@ -468,14 +468,14 @@ static inline void compile_call(Compiler *comp, Result *result)
     next_token(scan, result);
     goto end;
   }
-  compile_term(comp, result);
+  compile_term(comp, false, result);
   if (!result_is_ok(result))
     return;
   ++nargs;
   while (!match(scan, TOKEN_KIND_RBRACKET))
   {
     consume(scan, TOKEN_KIND_COMMA, result);
-    compile_term(comp, result);
+    compile_term(comp, false, result);
     if (!result_is_ok(result))
       return;
     ++nargs;
@@ -492,7 +492,8 @@ end:
   if (comp->emit)
   {
     Chunk *chunk = &comp->fn->chunk;
-    chunk_emit_byte(chunk, OP_CALL, result);
+    OpCode op = isTail ? OP_TAIL_CALL : OP_CALL;
+    chunk_emit_byte(chunk, op, result);
     if (!result_is_ok(result))
       return;
     chunk_emit_byte(chunk, nargs, result);
@@ -511,42 +512,42 @@ static inline void compile_binary(Compiler *comp, Result *result)
   consume(scan, TOKEN_KIND_COMMA, result);
   consume_string(scan, "lhs", result);
   consume(scan, TOKEN_KIND_COLON, result);
-  compile_term(comp, result);
+  compile_term(comp, false, result);
   if (!result_is_ok(result))
     return;
   consume(scan, TOKEN_KIND_COMMA, result);
   consume_string(scan, "op", result);
   consume(scan, TOKEN_KIND_COLON, result);
-  char *op = scan->token.start;
-  OpCode opcode = OP_NOP;
+  char *opcode = scan->token.start;
+  OpCode op = OP_NOP;
   consume(scan, TOKEN_KIND_STRING, result);
-  if (!strncmp(op, "Add", 3))
-    opcode = OP_ADD;
-  else if (!strncmp(op, "Sub", 3))
-    opcode = OP_SUB;
-  else if (!strncmp(op, "Mul", 3))
-    opcode = OP_MUL;
-  else if (!strncmp(op, "Div", 3))
-    opcode = OP_DIV;
-  else if (!strncmp(op, "Rem", 3))
-    opcode = OP_REM;
-  else if (!strncmp(op, "Eq", 2))
-    opcode = OP_EQ;
-  else if (!strncmp(op, "Neq", 3))
-    opcode = OP_NEQ;
-  else if (!strncmp(op, "Lt", 2))
-    opcode = OP_LT;
-  else if (!strncmp(op, "Gt", 2))
-    opcode = OP_GT;
-  else if (!strncmp(op, "Lte", 3))
-    opcode = OP_LTE;
-  else if (!strncmp(op, "Gte", 3))
-    opcode = OP_GTE;
-  else if (!strncmp(op, "And", 3))
-    opcode = OP_AND;
-  else if (!strncmp(op, "Or", 2))
-    opcode = OP_OR;
-  if (opcode == OP_NOP)
+  if (!strncmp(opcode, "Add", 3))
+    op = OP_ADD;
+  else if (!strncmp(opcode, "Sub", 3))
+    op = OP_SUB;
+  else if (!strncmp(opcode, "Mul", 3))
+    op = OP_MUL;
+  else if (!strncmp(opcode, "Div", 3))
+    op = OP_DIV;
+  else if (!strncmp(opcode, "Rem", 3))
+    op = OP_REM;
+  else if (!strncmp(opcode, "Eq", 2))
+    op = OP_EQ;
+  else if (!strncmp(opcode, "Neq", 3))
+    op = OP_NEQ;
+  else if (!strncmp(opcode, "Lt", 2))
+    op = OP_LT;
+  else if (!strncmp(opcode, "Gt", 2))
+    op = OP_GT;
+  else if (!strncmp(opcode, "Lte", 3))
+    op = OP_LTE;
+  else if (!strncmp(opcode, "Gte", 3))
+    op = OP_GTE;
+  else if (!strncmp(opcode, "And", 3))
+    op = OP_AND;
+  else if (!strncmp(opcode, "Or", 2))
+    op = OP_OR;
+  if (op == OP_NOP)
   {
     result_error(result, "unexpected operator `%s` at %d, %d", op, scan->token.line,
       scan->token.col);
@@ -555,7 +556,7 @@ static inline void compile_binary(Compiler *comp, Result *result)
   consume(scan, TOKEN_KIND_COMMA, result);
   consume_string(scan, "rhs", result);
   consume(scan, TOKEN_KIND_COLON, result);
-  compile_term(comp, result);
+  compile_term(comp, false, result);
   if (!result_is_ok(result))
     return;
   consume(scan, TOKEN_KIND_COMMA, result);
@@ -566,7 +567,7 @@ static inline void compile_binary(Compiler *comp, Result *result)
     return;
   consume(scan, TOKEN_KIND_RBRACE, result);
   if (comp->emit)
-    chunk_emit_byte(&comp->fn->chunk, opcode, result);
+    chunk_emit_byte(&comp->fn->chunk, op, result);
 }
 
 static inline void compile_function(Compiler *comp, Result *result)
@@ -609,7 +610,7 @@ end:
   consume(scan, TOKEN_KIND_COMMA, result);
   consume_string(scan, "value", result);
   consume(scan, TOKEN_KIND_COLON, result);
-  compile_term(&childComp, result);
+  compile_term(&childComp, true, result);
   if (!result_is_ok(result))
     return;
   consume(scan, TOKEN_KIND_COMMA, result);
@@ -676,13 +677,13 @@ static inline void compile_let(Compiler *comp, Result *result)
   consume(scan, TOKEN_KIND_COMMA, result);
   consume_string(scan, "value", result);
   consume(scan, TOKEN_KIND_COLON, result);
-  compile_term(comp, result);
+  compile_term(comp, false, result);
   if (!result_is_ok(result))
     return;
   consume(scan, TOKEN_KIND_COMMA, result);
   consume_string(scan, "next", result);
   consume(scan, TOKEN_KIND_COLON, result);
-  compile_term(comp, result);
+  compile_term(comp, true, result);
   if (!result_is_ok(result))
     return;
   consume(scan, TOKEN_KIND_COMMA, result);
@@ -706,7 +707,7 @@ static inline void compile_if(Compiler *comp, Result *result)
   consume(scan, TOKEN_KIND_COMMA, result);
   consume_string(scan, "condition", result);
   consume(scan, TOKEN_KIND_COLON, result);
-  compile_term(comp, result);
+  compile_term(comp, false, result);
   if (!result_is_ok(result))
     return;
   bool emit = comp->emit;
@@ -720,7 +721,7 @@ static inline void compile_if(Compiler *comp, Result *result)
   consume(scan, TOKEN_KIND_COMMA, result);
   consume_string(scan, "then", result);
   consume(scan, TOKEN_KIND_COLON, result);
-  compile_term(comp, result);
+  compile_term(comp, true, result);
   if (!result_is_ok(result))
     return;
   int offset2 = -1;
@@ -737,7 +738,7 @@ static inline void compile_if(Compiler *comp, Result *result)
   consume(scan, TOKEN_KIND_COMMA, result);
   consume_string(scan, "otherwise", result);
   consume(scan, TOKEN_KIND_COLON, result);
-  compile_term(comp, result);
+  compile_term(comp, true, result);
   if (!result_is_ok(result))
     return;
   if (emit)
@@ -766,7 +767,7 @@ static inline void compile_print(Compiler *comp, Result *result)
   consume(scan, TOKEN_KIND_COMMA, result);
   consume_string(scan, "value", result);
   consume(scan, TOKEN_KIND_COLON, result);
-  compile_term(comp, result);
+  compile_term(comp, false, result);
   if (!result_is_ok(result))
     return;
   consume(scan, TOKEN_KIND_COMMA, result);
@@ -790,7 +791,7 @@ static inline void compile_first(Compiler *comp, Result *result)
   consume(scan, TOKEN_KIND_COMMA, result);
   consume_string(scan, "value", result);
   consume(scan, TOKEN_KIND_COLON, result);
-  compile_term(comp, result);
+  compile_term(comp, false, result);
   if (!result_is_ok(result))
     return;
   consume(scan, TOKEN_KIND_COMMA, result);
@@ -814,7 +815,7 @@ static inline void compile_second(Compiler *comp, Result *result)
   consume(scan, TOKEN_KIND_COMMA, result);
   consume_string(scan, "value", result);
   consume(scan, TOKEN_KIND_COLON, result);
-  compile_term(comp, result);
+  compile_term(comp, false, result);
   if (!result_is_ok(result))
     return;
   consume(scan, TOKEN_KIND_COMMA, result);
@@ -838,18 +839,18 @@ static inline void compile_bool(Compiler *comp, Result *result)
   consume(scan, TOKEN_KIND_COMMA, result);
   consume_string(scan, "value", result);
   consume(scan, TOKEN_KIND_COLON, result);
-  OpCode opcode = OP_NOP;
+  OpCode op = OP_NOP;
   if (match(scan, TOKEN_KIND_FALSE_KW))
   {
     next_token(scan, result);
-    opcode = OP_FALSE;
+    op = OP_FALSE;
   }
   else if (match(scan, TOKEN_KIND_TRUE_KW))
   {
     next_token(scan, result);
-    opcode = OP_TRUE;
+    op = OP_TRUE;
   }
-  if (opcode == OP_NOP)
+  if (op == OP_NOP)
   {
     result_unexpected_token_error(result, scan);
     return;
@@ -862,7 +863,7 @@ static inline void compile_bool(Compiler *comp, Result *result)
     return;
   consume(scan, TOKEN_KIND_RBRACE, result);
   if (comp->emit)
-    chunk_emit_byte(&comp->fn->chunk, opcode, result);
+    chunk_emit_byte(&comp->fn->chunk, op, result);
 }
 
 static inline void compile_tuple(Compiler *comp, Result *result)
@@ -876,13 +877,13 @@ static inline void compile_tuple(Compiler *comp, Result *result)
   consume(scan, TOKEN_KIND_COMMA, result);
   consume_string(scan, "first", result);
   consume(scan, TOKEN_KIND_COLON, result);
-  compile_term(comp, result);
+  compile_term(comp, false, result);
   if (!result_is_ok(result))
     return;
   consume(scan, TOKEN_KIND_COMMA, result);
   consume_string(scan, "second", result);
   consume(scan, TOKEN_KIND_COLON, result);
-  compile_term(comp, result);
+  compile_term(comp, false, result);
   if (!result_is_ok(result))
     return;
   consume(scan, TOKEN_KIND_COMMA, result);

@@ -1,0 +1,27 @@
+
+chunk           ::= expr EOF
+
+expr            ::= and_expr ( '||' and_expr )*
+
+and_expr        ::= eq_expr ( '&&' eq_expr )*
+
+eq_expr         ::= comp_expr ( ( '==' | '!=' ) comp_expr )*
+
+comp_expr       ::= add_expr ( ( '<' | '<=' | '>' | '>=' ) add_expr )*
+
+add_expr        ::= mul_expr ( ( '+' | '-' ) mul_expr )*
+
+mul_expr        ::= prim_expr ( ( '*' | '/' | '%' ) prim_expr )*
+
+prim_expr       ::= bool
+                  | INT
+                  | STR
+                  | tuple
+                  | 'fn' '(' ( IDENT ( ',' IDENT )* )? ')' '=>' '{' expr '}'
+                  | 'let' IDENT '=' expr ';' expr
+                  | 'if' '(' expr ')' expr 'else' expr
+                  | '(' expr ')'
+
+bool            ::= 'false' | 'true'
+
+tuple           ::= '(' expr ',' expr ')'

@@ -45,6 +45,7 @@
     case OP_SECOND:        do_second((vm), (cl), (ip), (s), (r));        break; \
     case OP_PRINT:         do_print((vm), (cl), (ip), (s), (r));         break; \
     case OP_CALL:          do_call((vm), (cl), (ip), (s), (r));          break; \
+    case OP_TAIL_CALL:     do_tail_call((vm), (cl), (ip), (s), (r));     break; \
     case OP_RETURN:        do_return((vm), (cl), (ip), (s), (r));        break; \
     case OP_HALT:          do_halt((vm), (cl), (ip), (s), (r));          break; \
     } \
@@ -94,6 +95,7 @@ static void do_first(VM *vm, Closure *cl, uint8_t *ip, Value *slots, Result *res
 static void do_second(VM *vm, Closure *cl, uint8_t *ip, Value *slots, Result *result);
 static void do_print(VM *vm, Closure *cl, uint8_t *ip, Value *slots, Result *result);
 static void do_call(VM *vm, Closure *cl, uint8_t *ip, Value *slots, Result *result);
+static void do_tail_call(VM *vm, Closure *cl, uint8_t *ip, Value *slots, Result *result);
 static void do_return(VM *vm, Closure *cl, uint8_t *ip, Value *slots, Result *result);
 static void do_halt(VM *vm, Closure *cl, uint8_t *ip, Value *slots, Result *result);
 
@@ -101,16 +103,17 @@ static void do_halt(VM *vm, Closure *cl, uint8_t *ip, Value *slots, Result *resu
 typedef void (*InstructionFn)(VM *, Closure *, uint8_t *, Value *, Result *);
 
 static const InstructionFn dispatchTable[] = {
-  [OP_NOP]     = do_nop,     [OP_FALSE]    = do_false,    [OP_TRUE]          = do_true,
-  [OP_INT]     = do_int,     [OP_CONSTANT] = do_constant, [OP_TUPLE]         = do_tuple,
-  [OP_CLOSURE] = do_closure, [OP_LOCAL]    = do_local,    [OP_NONLOCAL]      = do_nonlocal,
-  [OP_ADD]     = do_add,     [OP_SUB]      = do_sub,      [OP_MUL]           = do_mul,
-  [OP_DIV]     = do_div,     [OP_REM]      = do_rem,      [OP_EQ]            = do_eq,
-  [OP_NEQ]     = do_neq,     [OP_LT]       = do_lt,       [OP_GT]            = do_gt,
-  [OP_LTE]     = do_lte,     [OP_GTE]      = do_gte,      [OP_AND]           = do_and,
-  [OP_OR]      = do_or,      [OP_JUMP]     = do_jump,     [OP_JUMP_IF_FALSE] = do_jump_if_false,
-  [OP_FIRST]   = do_first,   [OP_SECOND]   = do_second,   [OP_PRINT]         = do_print,
-  [OP_CALL]    = do_call,    [OP_RETURN]   = do_return,   [OP_HALT]          = do_halt
+  [OP_NOP]     = do_nop,     [OP_FALSE]     = do_false,     [OP_TRUE]          = do_true,
+  [OP_INT]     = do_int,     [OP_CONSTANT]  = do_constant,  [OP_TUPLE]         = do_tuple,
+  [OP_CLOSURE] = do_closure, [OP_LOCAL]     = do_local,     [OP_NONLOCAL]      = do_nonlocal,
+  [OP_ADD]     = do_add,     [OP_SUB]       = do_sub,       [OP_MUL]           = do_mul,
+  [OP_DIV]     = do_div,     [OP_REM]       = do_rem,       [OP_EQ]            = do_eq,
+  [OP_NEQ]     = do_neq,     [OP_LT]        = do_lt,        [OP_GT]            = do_gt,
+  [OP_LTE]     = do_lte,     [OP_GTE]       = do_gte,       [OP_AND]           = do_and,
+  [OP_OR]      = do_or,      [OP_JUMP]      = do_jump,      [OP_JUMP_IF_FALSE] = do_jump_if_false,
+  [OP_FIRST]   = do_first,   [OP_SECOND]    = do_second,    [OP_PRINT]         = do_print,
+  [OP_CALL]    = do_call,    [OP_TAIL_CALL] = do_tail_call, [OP_RETURN]        = do_return,
+  [OP_HALT]    = do_halt
 };
 #endif
 
@@ -577,8 +580,8 @@ static void do_call(VM *vm, Closure *cl, uint8_t *ip, Value *slots, Result *resu
 {
   ++ip;
   int nargs = read_byte(&ip);
-  Value *stackSlots = &vm->stack.top[-nargs];
-  Value val = stackSlots[0];
+  Value *frameSlots = &vm->stack.top[-nargs];
+  Value val = frameSlots[0];
   if (!is_closure(val))
   {
     result_error(result, "cannot call %s", type_name(type(val)));
@@ -594,7 +597,34 @@ static void do_call(VM *vm, Closure *cl, uint8_t *ip, Value *slots, Result *resu
   if (!result_is_ok(result))
     return;
   ip = callee->fn->chunk.code;
-  dispatch(vm, callee, ip, stackSlots, result);
+  dispatch(vm, callee, ip, frameSlots, result);
+}
+
+static void do_tail_call(VM *vm, Closure *cl, uint8_t *ip, Value *slots, Result *result)
+{
+  (void) cl;
+  ++ip;
+  int nargs = read_byte(&ip);
+  Stack *stack = &vm->stack;
+  Value *frameSlots = &stack->top[-nargs];
+  Value val = frameSlots[0];
+  if (!is_closure(val))
+  {
+    result_error(result, "cannot call %s", type_name(type(val)));
+    return;
+  }
+  Closure *callee = as_closure(val);
+  if (callee->fn->arity != nargs)
+  {
+    result_error(result, "expected %d arguments, got %d", callee->fn->arity, nargs);
+    return;
+  }
+  ip = callee->fn->chunk.code;
+  int n = nargs + 1;
+  for (int i = 0; i < n; ++i)
+    slots[i] = frameSlots[i];
+  stack->top -= n;
+  dispatch(vm, callee, ip, slots, result);
 }
 
 static void do_return(VM *vm, Closure *cl, uint8_t *ip, Value *slots, Result *result)

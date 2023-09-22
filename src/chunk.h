@@ -12,16 +12,17 @@
 
 typedef enum
 {
-  OP_NOP,     OP_FALSE,    OP_TRUE,
-  OP_INT,     OP_CONSTANT, OP_TUPLE,
-  OP_CLOSURE, OP_LOCAL,    OP_NONLOCAL,
-  OP_ADD,     OP_SUB,      OP_MUL,
-  OP_DIV,     OP_REM,      OP_EQ,
-  OP_NEQ,     OP_LT,       OP_GT,
-  OP_LTE,     OP_GTE,      OP_AND,
-  OP_OR,      OP_JUMP,     OP_JUMP_IF_FALSE,
-  OP_FIRST,   OP_SECOND,   OP_PRINT,
-  OP_CALL,    OP_RETURN,   OP_HALT
+  OP_NOP,     OP_FALSE,     OP_TRUE,
+  OP_INT,     OP_CONSTANT,  OP_TUPLE,
+  OP_CLOSURE, OP_LOCAL,     OP_NONLOCAL,
+  OP_ADD,     OP_SUB,       OP_MUL,
+  OP_DIV,     OP_REM,       OP_EQ,
+  OP_NEQ,     OP_LT,        OP_GT,
+  OP_LTE,     OP_GTE,       OP_AND,
+  OP_OR,      OP_JUMP,      OP_JUMP_IF_FALSE,
+  OP_FIRST,   OP_SECOND,    OP_PRINT,
+  OP_CALL,    OP_TAIL_CALL, OP_RETURN,
+  OP_HALT
 } OpCode;
 
 typedef struct

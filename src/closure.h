@@ -11,7 +11,7 @@
 typedef struct
 {
   Function *fn;
-  Value *nonlocals[1];
+  Value nonlocals[1];
 } Closure;
 
 Closure *closure_new(Function *fn, Result *result);

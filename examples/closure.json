@@ -3,7 +3,7 @@
   "expression": {
     "kind": "Let",
     "name": {
-      "text": "x",
+      "text": "f",
       "location": {
         "start": 4,
         "end": 5,
@@ -11,127 +11,82 @@
       }
     },
     "value": {
-      "kind": "Int",
-      "value": 1,
+      "kind": "Function",
+      "parameters": [],
+      "value": {
+        "kind": "Let",
+        "name": {
+          "text": "x",
+          "location": {
+            "start": 25,
+            "end": 26,
+            "filename": "examples/closure.rinha"
+          }
+        },
+        "value": {
+          "kind": "Int",
+          "value": 1,
+          "location": {
+            "start": 29,
+            "end": 30,
+            "filename": "examples/closure.rinha"
+          }
+        },
+        "next": {
+          "kind": "Function",
+          "parameters": [],
+          "value": {
+            "kind": "Var",
+            "text": "x",
+            "location": {
+              "start": 49,
+              "end": 50,
+              "filename": "examples/closure.rinha"
+            }
+          },
+          "location": {
+            "start": 34,
+            "end": 54,
+            "filename": "examples/closure.rinha"
+          }
+        },
+        "location": {
+          "start": 21,
+          "end": 54,
+          "filename": "examples/closure.rinha"
+        }
+      },
       "location": {
         "start": 8,
-        "end": 9,
+        "end": 56,
         "filename": "examples/closure.rinha"
       }
     },
     "next": {
       "kind": "Let",
       "name": {
-        "text": "f",
+        "text": "g",
         "location": {
-          "start": 15,
-          "end": 16,
+          "start": 62,
+          "end": 63,
           "filename": "examples/closure.rinha"
         }
       },
       "value": {
-        "kind": "Function",
-        "parameters": [
-          {
-            "text": "y",
-            "location": {
-              "start": 23,
-              "end": 24,
-              "filename": "examples/closure.rinha"
-            }
-          }
-        ],
-        "value": {
-          "kind": "Let",
-          "name": {
-            "text": "g",
-            "location": {
-              "start": 37,
-              "end": 38,
-              "filename": "examples/closure.rinha"
-            }
-          },
-          "value": {
-            "kind": "Function",
-            "parameters": [
-              {
-                "text": "z",
-                "location": {
-                  "start": 45,
-                  "end": 46,
-                  "filename": "examples/closure.rinha"
-                }
-              }
-            ],
-            "value": {
-              "kind": "Binary",
-              "lhs": {
-                "kind": "Var",
-                "text": "x",
-                "location": {
-                  "start": 57,
-                  "end": 58,
-                  "filename": "examples/closure.rinha"
-                }
-              },
-              "op": "Add",
-              "rhs": {
-                "kind": "Binary",
-                "lhs": {
-                  "kind": "Var",
-                  "text": "y",
-                  "location": {
-                    "start": 61,
-                    "end": 62,
-                    "filename": "examples/closure.rinha"
-                  }
-                },
-                "op": "Add",
-                "rhs": {
-                  "kind": "Var",
-                  "text": "z",
-                  "location": {
-                    "start": 65,
-                    "end": 66,
-                    "filename": "examples/closure.rinha"
-                  }
-                },
-                "location": {
-                  "start": 61,
-                  "end": 66,
-                  "filename": "examples/closure.rinha"
-                }
-              },
-              "location": {
-                "start": 57,
-                "end": 66,
-                "filename": "examples/closure.rinha"
-              }
-            },
-            "location": {
-              "start": 41,
-              "end": 70,
-              "filename": "examples/closure.rinha"
-            }
-          },
-          "next": {
-            "kind": "Var",
-            "text": "g",
-            "location": {
-              "start": 74,
-              "end": 75,
-              "filename": "examples/closure.rinha"
-            }
-          },
+        "kind": "Call",
+        "callee": {
+          "kind": "Var",
+          "text": "f",
           "location": {
-            "start": 33,
-            "end": 75,
+            "start": 66,
+            "end": 67,
             "filename": "examples/closure.rinha"
           }
         },
+        "arguments": [],
         "location": {
-          "start": 19,
-          "end": 77,
+          "start": 66,
+          "end": 69,
           "filename": "examples/closure.rinha"
         }
       },
@@ -140,71 +95,42 @@
         "value": {
           "kind": "Call",
           "callee": {
-            "kind": "Call",
-            "callee": {
-              "kind": "Var",
-              "text": "f",
-              "location": {
-                "start": 85,
-                "end": 86,
-                "filename": "examples/closure.rinha"
-              }
-            },
-            "arguments": [
-              {
-                "kind": "Int",
-                "value": 2,
-                "location": {
-                  "start": 87,
-                  "end": 88,
-                  "filename": "examples/closure.rinha"
-                }
-              }
-            ],
+            "kind": "Var",
+            "text": "g",
             "location": {
-              "start": 85,
-              "end": 89,
+              "start": 77,
+              "end": 78,
               "filename": "examples/closure.rinha"
             }
           },
-          "arguments": [
-            {
-              "kind": "Int",
-              "value": 3,
-              "location": {
-                "start": 90,
-                "end": 91,
-                "filename": "examples/closure.rinha"
-              }
-            }
-          ],
+          "arguments": [],
           "location": {
-            "start": 85,
-            "end": 92,
+            "start": 77,
+            "end": 80,
             "filename": "examples/closure.rinha"
           }
         },
         "location": {
-          "start": 79,
-          "end": 93,
+          "start": 71,
+          "end": 81,
           "filename": "examples/closure.rinha"
         }
       },
       "location": {
-        "start": 11,
-        "end": 93,
+        "start": 58,
+        "end": 81,
         "filename": "examples/closure.rinha"
       }
     },
     "location": {
       "start": 0,
-      "end": 93,
+      "end": 81,
       "filename": "examples/closure.rinha"
     }
   },
   "location": {
     "start": 0,
-    "end": 93,
+    "end": 81,
     "filename": "examples/closure.rinha"
   }
 }

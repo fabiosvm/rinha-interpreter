@@ -21,8 +21,7 @@ typedef enum
   OP_LTE,     OP_GTE,       OP_AND,
   OP_OR,      OP_JUMP,      OP_JUMP_IF_FALSE,
   OP_FIRST,   OP_SECOND,    OP_PRINT,
-  OP_CALL,    OP_TAIL_CALL, OP_RETURN,
-  OP_HALT
+  OP_CALL,    OP_TAIL_CALL, OP_RETURN
 } OpCode;
 
 typedef struct

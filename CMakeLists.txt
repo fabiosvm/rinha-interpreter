@@ -9,17 +9,13 @@ set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
 if(MSVC)
   add_compile_options(/W4 /WX /02)
 else()
-  add_compile_options(-Wall -Wextra -Wpedantic -Werror -foptimize-sibling-calls)
-  add_compile_options(-O3)
-endif()
-
-if(NOT MSVC)
+  add_compile_options(-Wall -Wextra -Wpedantic -Werror -O3 -foptimize-sibling-calls)
   add_compile_options("$<$<CONFIG:Debug>:-fsanitize=address>")
   add_link_options("$<$<CONFIG:Debug>:-fsanitize=address>")
 endif()
 
 if(NOT APPLE)
-  set(CMAKE_EXE_LINKER_FLAGS "-static")
+  add_link_options("$<$<CONFIG:Release>:-static>")
 endif()
 
 add_executable(${PROJECT_NAME}

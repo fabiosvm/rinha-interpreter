@@ -151,9 +151,6 @@ void dump_function(Function *fn)
     case OP_RETURN:
       printf("RETURN\n");
       break;
-    case OP_HALT:
-      printf("HALT\n");
-      break;
     }
   }
   printf("; %d instruction(s)\n\n", n);

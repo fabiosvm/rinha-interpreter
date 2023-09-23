@@ -244,7 +244,7 @@ static inline void compile_file(Compiler *comp, Result *result)
   // }
   consume(scan, TOKEN_KIND_RBRACE, result);
   if (comp->emit)
-    chunk_emit_byte(&comp->fn->chunk, OP_HALT, result);
+    chunk_emit_byte(&comp->fn->chunk, OP_RETURN, result);
 }
 
 static inline void compile_term(Compiler *comp, bool isTail, Result *result)

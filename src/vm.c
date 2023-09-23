@@ -47,7 +47,6 @@
     case OP_CALL:          do_call((vm), (cl), (ip), (s), (r));          break; \
     case OP_TAIL_CALL:     do_tail_call((vm), (cl), (ip), (s), (r));     break; \
     case OP_RETURN:        do_return((vm), (cl), (ip), (s), (r));        break; \
-    case OP_HALT:          do_halt((vm), (cl), (ip), (s), (r));          break; \
     } \
   } while (0)
 #endif
@@ -97,7 +96,6 @@ static void do_print(VM *vm, Closure *cl, uint8_t *ip, Value *slots, Result *res
 static void do_call(VM *vm, Closure *cl, uint8_t *ip, Value *slots, Result *result);
 static void do_tail_call(VM *vm, Closure *cl, uint8_t *ip, Value *slots, Result *result);
 static void do_return(VM *vm, Closure *cl, uint8_t *ip, Value *slots, Result *result);
-static void do_halt(VM *vm, Closure *cl, uint8_t *ip, Value *slots, Result *result);
 
 #if !TAIL_CALL_SWITCH
 typedef void (*InstructionFn)(VM *, Closure *, uint8_t *, Value *, Result *);
@@ -112,8 +110,7 @@ static const InstructionFn dispatchTable[] = {
   [OP_LTE]     = do_lte,     [OP_GTE]       = do_gte,       [OP_AND]           = do_and,
   [OP_OR]      = do_or,      [OP_JUMP]      = do_jump,      [OP_JUMP_IF_FALSE] = do_jump_if_false,
   [OP_FIRST]   = do_first,   [OP_SECOND]    = do_second,    [OP_PRINT]         = do_print,
-  [OP_CALL]    = do_call,    [OP_TAIL_CALL] = do_tail_call, [OP_RETURN]        = do_return,
-  [OP_HALT]    = do_halt
+  [OP_CALL]    = do_call,    [OP_TAIL_CALL] = do_tail_call, [OP_RETURN]        = do_return
 };
 #endif
 
@@ -267,19 +264,19 @@ static void do_closure(VM *vm, Closure *cl, uint8_t *ip, Value *slots, Result *r
   Closure *newClosure = closure_new(fn, result);
   if (!result_is_ok(result))
     return;
+  push(vm, closure_value(newClosure), result);
+  if (!result_is_ok(result))
+    return;
   int numNonlocals = fn->nonlocals.count;
   Nonlocal *nonlocals = fn->nonlocals.elements;
-  Value **nonlocalSlots = cl->nonlocals;
+  Value *nonlocalSlots = cl->nonlocals;
   for (int i = 0; i < numNonlocals; ++i)
   {
     Nonlocal *nonlocal = &nonlocals[i];
     uint8_t nonlocalIndex = nonlocal->index;
-    Value *val = nonlocal->isLocal ? &slots[nonlocalIndex] : nonlocalSlots[nonlocalIndex];
+    Value val = nonlocal->isLocal ? slots[nonlocalIndex] : nonlocalSlots[nonlocalIndex];
     newClosure->nonlocals[i] = val;
   }
-  push(vm, closure_value(newClosure), result);
-  if (!result_is_ok(result))
-    return;
   dispatch(vm, cl, ip, slots, result);
 }
 
@@ -298,7 +295,7 @@ static void do_nonlocal(VM *vm, Closure *cl, uint8_t *ip, Value *slots, Result *
 {
   ++ip;
   int index = read_byte(&ip);
-  Value val = *(cl->nonlocals[index]);
+  Value val = cl->nonlocals[index];
   push(vm, val, result);
   if (!result_is_ok(result))
     return;
@@ -629,7 +626,10 @@ static void do_tail_call(VM *vm, Closure *cl, uint8_t *ip, Value *slots, Result 
 
 static void do_return(VM *vm, Closure *cl, uint8_t *ip, Value *slots, Result *result)
 {
-  CallFrame frame = callstack_pop(&vm->cstack);
+  Callstack *cstack = &vm->cstack;
+  if (callstack_is_empty(cstack))
+    return;
+  CallFrame frame = callstack_pop(cstack);
   Stack *stack = &vm->stack;
   slots[0] = stack_peek(stack, 0);
   stack->top = slots;
@@ -637,15 +637,6 @@ static void do_return(VM *vm, Closure *cl, uint8_t *ip, Value *slots, Result *re
   ip = frame.ip;
   slots = frame.slots;
   dispatch(vm, cl, ip, slots, result);
-}
-
-static void do_halt(VM *vm, Closure *cl, uint8_t *ip, Value *slots, Result *result)
-{
-  (void) vm;
-  (void) cl;
-  (void) ip;
-  (void) slots;
-  (void) result;
 }
 
 void vm_init(VM *vm, int stackSize, int cstackSize, Result *result)

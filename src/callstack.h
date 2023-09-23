@@ -9,7 +9,8 @@
 
 #define CALLSTACK_DEFAULT_SIZE (1 << 20) /* 1MB */
 
-#define callstack_is_full(cs) ((cs)->top == (cs)->end)
+#define callstack_is_empty(cs) ((cs)->top == &(cs)->frames[-1])
+#define callstack_is_full(cs)  ((cs)->top == (cs)->end)
 
 #define callstack_push(cs, cl, ip, s) \
   do { \

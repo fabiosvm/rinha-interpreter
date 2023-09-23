@@ -15,3 +15,4 @@ FROM scratch
 COPY --from=builder /app/build/rinha /rinha
 
 ENTRYPOINT ["/rinha"]
+CMD ["run", "/var/rinha/source.rinha.json"]

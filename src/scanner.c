@@ -6,8 +6,6 @@
 #include <ctype.h>
 #include <string.h>
 
-#define KEYWORD_MAX_LENGTH 5
-
 #define char_at(t, i)   ((t)->pos[(i)])
 #define current_char(t) char_at(t, 0)
 
@@ -104,7 +102,7 @@ static inline bool match_string(Scanner *scan, Result *result)
 
 static inline bool match_keyword(Scanner *scan, const char *kw)
 {
-  int n = (int) strnlen(kw, KEYWORD_MAX_LENGTH);
+  int n = (int) strlen(kw);
   if (strncmp(scan->pos, kw, n)
    || (isalnum(char_at(scan, n)))
    || (char_at(scan, n) == '_'))

@@ -37,7 +37,7 @@ Execute o seguinte comando para construir o projeto:
 Depois de construído, o interpretador estará disponível em `build/rinha`. Dessa forma, para executar um programa, basta executar:
 
 ```text
-./build/rinha run examples/fib.json
+./build/rinha run examples/print.json
 ```
 
 ## Rodar usando o Docker
@@ -46,7 +46,7 @@ Se você não quiser compilar o projeto, pode usar o Docker para executar o inte
 
 ```text
 sudo docker build -t rinha-interpreter .
-sudo docker run -v ./examples/fib.json:/fib.json rinha-interpreter run /fib.json
+sudo docker run -v ./examples/print.json:/var/rinha/source.rinha.json rinha-interpreter
 ```
 
 ## Road Map

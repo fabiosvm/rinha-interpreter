@@ -148,7 +148,7 @@ static inline void resolve_variable(Compiler *comp, Token *token, Variable *out,
   Compiler *enclosing = comp->enclosing;
   if (!enclosing)
   {
-    result_error(result, "variable `%->*s` is used but not defined",
+    result_error(result, "variable `%.*s` is used but not defined",
       token->length, token->start);
     return;
   }

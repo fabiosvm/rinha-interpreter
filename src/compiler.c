@@ -4,6 +4,8 @@
 
 #include "compiler.h"
 #include <assert.h>
+#include <errno.h>
+#include <limits.h>
 #include <stdlib.h>
 #include <string.h>
 #include "scanner.h"
@@ -57,6 +59,7 @@ typedef struct Compiler
 
 static inline void result_unexpected_token_error(Result *result, Scanner *scan);
 static inline uint8_t add_constant(Compiler *comp, Value val, Result *result);
+static inline int to_int(char *str, Result *result);
 static inline void add_local(Compiler *comp, Token *token, Result *result);
 static inline void add_variable(Compiler *comp, Token *token, bool isLocal, uint8_t index,
   Variable *out, Result *result);
@@ -109,6 +112,19 @@ static inline uint8_t add_constant(Compiler *comp, Value val, Result *result)
   if (!result_is_ok(result))
     return 0;
   return (uint8_t) index;
+}
+
+static inline int to_int(char *str, Result *result)
+{
+  char *end;
+  errno = 0;
+  long data = strtol(str, &end, 10);
+  if (errno == ERANGE || data > INT_MAX || data < INT_MIN)
+  {
+    result_error(result, "integer overflow");
+    return 0;
+  }
+  return (int) data;
 }
 
 static inline void add_local(Compiler *comp, Token *token, Result *result)
@@ -389,7 +405,9 @@ static inline void compile_int(Compiler *comp, Result *result)
   if (comp->emit)
   {
     Chunk *chunk = &comp->fn->chunk;
-    int data = atoi(value.start);
+    int data = to_int(value.start, result);
+    if (!result_is_ok(result))
+      return;
     if (data <= UINT16_MAX)
     {
       chunk_emit_byte(chunk, OP_INT, result);

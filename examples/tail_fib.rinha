@@ -9,4 +9,4 @@ let fib = fn (n, k1, k2) => {
     }
   }
 };
-print(fib(40, 0, 1))
+print(fib(10000000, 0, 1))

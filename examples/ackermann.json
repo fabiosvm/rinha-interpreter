@@ -314,35 +314,35 @@
           },
           {
             "kind": "Int",
-            "value": 11,
+            "value": 4,
             "location": {
               "start": 201,
-              "end": 203,
+              "end": 202,
               "filename": "examples/ackermann.rinha"
             }
           }
         ],
         "location": {
           "start": 188,
-          "end": 204,
+          "end": 203,
           "filename": "examples/ackermann.rinha"
         }
       },
       "location": {
         "start": 182,
-        "end": 205,
+        "end": 204,
         "filename": "examples/ackermann.rinha"
       }
     },
     "location": {
       "start": 0,
-      "end": 205,
+      "end": 204,
       "filename": "examples/ackermann.rinha"
     }
   },
   "location": {
     "start": 0,
-    "end": 205,
+    "end": 204,
     "filename": "examples/ackermann.rinha"
   }
 }

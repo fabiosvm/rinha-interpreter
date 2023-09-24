@@ -3,7 +3,6 @@
 //
 
 #include "chunk.h"
-#include <string.h>
 #include "memory.h"
 
 static inline void ensure_capacity(Chunk *chunk, int minCapacity, Result *result);
@@ -15,10 +14,9 @@ static inline void ensure_capacity(Chunk *chunk, int minCapacity, Result *result
   int capacity = chunk->capacity << 1;
   while (capacity < minCapacity)
     capacity <<= 1;
-  uint8_t *code = memory_alloc(capacity, result);
+  uint8_t *code = memory_realloc(chunk->code, capacity, result);
   if (!result_is_ok(result))
     return;
-  memcpy(code, chunk->code, chunk->count);
   chunk->capacity = capacity;
   chunk->code = code;
 }

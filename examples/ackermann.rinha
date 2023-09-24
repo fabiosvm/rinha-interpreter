@@ -9,4 +9,4 @@ let ackermann = fn (m, n) => {
     }
   }
 };
-print(ackermann(3, 11))
+print(ackermann(3, 4))

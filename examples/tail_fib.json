@@ -230,10 +230,10 @@
         "arguments": [
           {
             "kind": "Int",
-            "value": 40,
+            "value": 10000000,
             "location": {
               "start": 157,
-              "end": 159,
+              "end": 165,
               "filename": "examples/tail_fib.rinha"
             }
           },
@@ -241,8 +241,8 @@
             "kind": "Int",
             "value": 0,
             "location": {
-              "start": 161,
-              "end": 162,
+              "start": 167,
+              "end": 168,
               "filename": "examples/tail_fib.rinha"
             }
           },
@@ -250,33 +250,33 @@
             "kind": "Int",
             "value": 1,
             "location": {
-              "start": 164,
-              "end": 165,
+              "start": 170,
+              "end": 171,
               "filename": "examples/tail_fib.rinha"
             }
           }
         ],
         "location": {
           "start": 153,
-          "end": 166,
+          "end": 172,
           "filename": "examples/tail_fib.rinha"
         }
       },
       "location": {
         "start": 147,
-        "end": 167,
+        "end": 173,
         "filename": "examples/tail_fib.rinha"
       }
     },
     "location": {
       "start": 0,
-      "end": 167,
+      "end": 173,
       "filename": "examples/tail_fib.rinha"
     }
   },
   "location": {
     "start": 0,
-    "end": 167,
+    "end": 173,
     "filename": "examples/tail_fib.rinha"
   }
 }

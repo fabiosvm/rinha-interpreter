@@ -3,7 +3,6 @@
 //
 
 #include "function.h"
-#include <string.h>
 #include "memory.h"
 
 static inline void nonlocal_array_init(NonlocalArray *arr, Result *result);
@@ -27,10 +26,9 @@ static inline void nonlocal_array_grow(NonlocalArray *arr, Result *result)
   if (arr->count < arr->capacity)
     return;
   int capacity = arr->capacity << 1;
-  Nonlocal *elements = memory_alloc(sizeof(*elements) * capacity, result);
+  Nonlocal *elements = memory_realloc(arr->elements, sizeof(*elements) * capacity, result);
   if (!result_is_ok(result))
     return;
-  memcpy(elements, arr->elements, sizeof(*elements) * arr->count);
   arr->capacity = capacity;
   arr->elements = elements;
 }
@@ -51,10 +49,9 @@ static inline void function_array_grow(FunctionArray *arr, Result *result)
   if (arr->count < arr->capacity)
     return;
   int capacity = arr->capacity << 1;
-  Function **elements = memory_alloc(sizeof(*elements) * capacity, result);
+  Function **elements = memory_realloc(arr->elements, sizeof(*elements) * capacity, result);
   if (!result_is_ok(result))
     return;
-  memcpy(elements, arr->elements, sizeof(*elements) * arr->count);
   arr->capacity = capacity;
   arr->elements = elements;
 }

@@ -15,7 +15,6 @@ A fim de priorizar velocidade de execução, sem perder a simplicidade na implem
 - Interpretador de bytecode
 - Máquina Virtual baseada em pilha
 - Tagged unions (ou tagged pointer) para representar valores
-- Alocador de memória simples (Bump Allocator)
 - Tail call dispatching (+ switch opcional)
 
 ## Requisitos

@@ -617,10 +617,9 @@ static void do_tail_call(VM *vm, Closure *cl, uint8_t *ip, Value *slots, Result 
     return;
   }
   ip = callee->fn->chunk.code;
-  int n = nargs + 1;
-  for (int i = 0; i < n; ++i)
+  for (int i = 0; i < nargs + 1; ++i)
     slots[i] = frameSlots[i];
-  stack->top -= n;
+  stack->top = &slots[nargs];
   dispatch(vm, callee, ip, slots, result);
 }
 

@@ -181,8 +181,8 @@
           "kind": "Var",
           "text": "fib",
           "location": {
-            "start": 96,
-            "end": 99,
+            "start": 95,
+            "end": 98,
             "filename": "examples/fib.rinha"
           }
         },
@@ -191,33 +191,33 @@
             "kind": "Int",
             "value": 40,
             "location": {
-              "start": 100,
-              "end": 102,
+              "start": 99,
+              "end": 101,
               "filename": "examples/fib.rinha"
             }
           }
         ],
         "location": {
-          "start": 96,
-          "end": 103,
+          "start": 95,
+          "end": 102,
           "filename": "examples/fib.rinha"
         }
       },
       "location": {
-        "start": 90,
-        "end": 104,
+        "start": 89,
+        "end": 103,
         "filename": "examples/fib.rinha"
       }
     },
     "location": {
       "start": 0,
-      "end": 104,
+      "end": 103,
       "filename": "examples/fib.rinha"
     }
   },
   "location": {
     "start": 0,
-    "end": 104,
+    "end": 103,
     "filename": "examples/fib.rinha"
   }
 }

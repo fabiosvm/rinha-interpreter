@@ -17,11 +17,18 @@ prim_expr       ::= bool
                   | INT
                   | STR
                   | tuple
-                  | 'fn' '(' ( IDENT ( ',' IDENT )* )? ')' '=>' '{' expr '}'
+                  | block
+                  | 'fn' '(' ( IDENT ( ',' IDENT )* )? ')' '=>' expr
                   | 'let' IDENT '=' expr ';' expr
-                  | 'if' '(' expr ')' expr 'else' expr
+                  | 'if' '(' expr ')' block 'else' block
+                  | ( 'print' | 'first' | 'second' ) '(' expr ')'
+                  | IDENT call?
                   | '(' expr ')'
 
 bool            ::= 'false' | 'true'
 
 tuple           ::= '(' expr ',' expr ')'
+
+block           ::= '{' expr '}'
+
+call            ::= '(' ( expr ( ',' expr )* )? ')'

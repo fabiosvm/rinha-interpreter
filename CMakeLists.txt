@@ -30,6 +30,7 @@ add_executable(${PROJECT_NAME}
   src/compiler.c
   src/dump.c
   src/function.c
+  src/hash.c
   src/main.c
   src/memory.c
   src/result.c

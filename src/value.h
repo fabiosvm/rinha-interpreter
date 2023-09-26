@@ -5,18 +5,16 @@
 #ifndef VALUE_H
 #define VALUE_H
 
+#include <stdint.h>
 #include "result.h"
 
 #ifndef TAGGED_POINTER
 #define TAGGED_POINTER 1
 #endif
 
-#if TAGGED_POINTER
-#include <stdint.h>
-#endif
-
 typedef enum
 {
+  TYPE_UNDEFINED,
   TYPE_BOOL,
   TYPE_INT,
   TYPE_STR,
@@ -28,6 +26,7 @@ typedef enum
 #define FLAG_FALSY 0x01
 
 #if TAGGED_POINTER
+#define UNDEFINED_VALUE  ((Value) { .bits = (((int64_t) FLAG_FALSY) << 3) | TYPE_UNDEFINED })
 #define FALSE_VALUE      ((Value) { .bits = (((((int64_t) false) << 1) | FLAG_FALSY) << 3) | TYPE_BOOL })
 #define TRUE_VALUE       ((Value) { .bits = (((int64_t) true) << 4) | TYPE_BOOL })
 #define int_value(i)     ((Value) { .bits = (((int64_t) (i)) << 4) | TYPE_INT })
@@ -37,6 +36,7 @@ typedef enum
 #endif
 
 #if !TAGGED_POINTER
+#define UNDEFINED_VALUE  ((Value) { .type = TYPE_UNDEFINED, .flags = FLAG_FALSY })
 #define FALSE_VALUE      ((Value) { .type = TYPE_BOOL, .flags = FLAG_FALSY, .asBool = false })
 #define TRUE_VALUE       ((Value) { .type = TYPE_BOOL, .flags = FLAG_NONE, .asBool = true })
 #define int_value(i)     ((Value) { .type = TYPE_INT, .flags = FLAG_NONE, .asInt = (i) })
@@ -55,12 +55,13 @@ typedef enum
 #define flags(v) ((v).flags)
 #endif
 
-#define is_bool(v)    (type(v) == TYPE_BOOL)
-#define is_int(v)     (type(v) == TYPE_INT)
-#define is_str(v)     (type(v) == TYPE_STR)
-#define is_tuple(v)   (type(v) == TYPE_TUPLE)
-#define is_closure(v) (type(v) == TYPE_CLOSURE)
-#define is_falsy(v)   (flags(v) & FLAG_FALSY)
+#define is_undefined(v) (type(v) == TYPE_UNDEFINED)
+#define is_bool(v)      (type(v) == TYPE_BOOL)
+#define is_int(v)       (type(v) == TYPE_INT)
+#define is_str(v)       (type(v) == TYPE_STR)
+#define is_tuple(v)     (type(v) == TYPE_TUPLE)
+#define is_closure(v)   (type(v) == TYPE_CLOSURE)
+#define is_falsy(v)     (flags(v) & FLAG_FALSY)
 
 #if TAGGED_POINTER
 #define as_bool(v)    ((bool) ((v).bits >> 4))
@@ -101,6 +102,7 @@ typedef struct
 #endif
 
 char *type_name(Type type);
+uint32_t value_hash(Value val);
 bool value_equal(Value val1, Value val2);
 int value_compare(Value val1, Value val2, Result *result);
 void value_print(Value val);

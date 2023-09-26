@@ -577,7 +577,8 @@ static void do_call(VM *vm, Closure *cl, uint8_t *ip, Value *slots, Result *resu
 {
   ++ip;
   int nargs = read_byte(&ip);
-  Value *frameSlots = &vm->stack.top[-nargs];
+  Stack *stack = &vm->stack;
+  Value *frameSlots = &stack->top[-nargs];
   Value val = frameSlots[0];
   if (!is_closure(val))
   {
@@ -590,6 +591,17 @@ static void do_call(VM *vm, Closure *cl, uint8_t *ip, Value *slots, Result *resu
     result_error(result, "expected %d arguments, got %d", callee->fn->arity, nargs);
     return;
   }
+#if MEMORIZATION
+  Value *args = &frameSlots[1];
+  Value resultVal = closure_remember(callee, args);
+  if (!is_undefined(resultVal))
+  {
+    frameSlots[0] = resultVal;
+    stack->top = frameSlots;
+    dispatch(vm, cl, ip, frameSlots, result);
+    return;
+  }
+#endif
   push_frame(vm, cl, ip, slots, result);
   if (!result_is_ok(result))
     return;
@@ -616,6 +628,17 @@ static void do_tail_call(VM *vm, Closure *cl, uint8_t *ip, Value *slots, Result 
     result_error(result, "expected %d arguments, got %d", callee->fn->arity, nargs);
     return;
   }
+#if MEMORIZATION
+  Value *args = &frameSlots[1];
+  Value resultVal = closure_remember(callee, args);
+  if (!is_undefined(resultVal))
+  {
+    frameSlots[0] = resultVal;
+    stack->top = frameSlots;
+    dispatch(vm, cl, ip, frameSlots, result);
+    return;
+  }
+#endif
   ip = callee->fn->chunk.code;
   for (int i = 0; i < nargs + 1; ++i)
     slots[i] = frameSlots[i];
@@ -630,7 +653,12 @@ static void do_return(VM *vm, Closure *cl, uint8_t *ip, Value *slots, Result *re
     return;
   CallFrame frame = callstack_pop(cstack);
   Stack *stack = &vm->stack;
-  slots[0] = stack_peek(stack, 0);
+  Value resultVal = stack_peek(stack, 0);
+#if MEMORIZATION
+  Value *args = &slots[1];
+  closure_memorize(cl, args, resultVal);
+#endif
+  slots[0] = resultVal;
   stack->top = slots;
   cl = frame.cl;
   ip = frame.ip;

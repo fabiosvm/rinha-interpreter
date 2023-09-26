@@ -152,35 +152,35 @@
         "arguments": [
           {
             "kind": "Int",
-            "value": 364888,
+            "value": 100,
             "location": {
               "start": 92,
-              "end": 98,
+              "end": 95,
               "filename": "examples/sum.rinha"
             }
           }
         ],
         "location": {
           "start": 88,
-          "end": 99,
+          "end": 96,
           "filename": "examples/sum.rinha"
         }
       },
       "location": {
         "start": 82,
-        "end": 100,
+        "end": 97,
         "filename": "examples/sum.rinha"
       }
     },
     "location": {
       "start": 0,
-      "end": 100,
+      "end": 97,
       "filename": "examples/sum.rinha"
     }
   },
   "location": {
     "start": 0,
-    "end": 100,
+    "end": 97,
     "filename": "examples/sum.rinha"
   }
 }

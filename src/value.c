@@ -5,15 +5,19 @@
 #include "value.h"
 #include <stdio.h>
 #include "closure.h"
+#include "hash.h"
 #include "str.h"
 #include "tuple.h"
 
 char *type_name(Type type)
 {
-  char *name = "bool";
+  char *name = "undefined";
   switch (type)
   {
+  case TYPE_UNDEFINED:
+    break;
   case TYPE_BOOL:
+    name = "bool";
     break;
   case TYPE_INT:
     name = "int";
@@ -31,13 +35,44 @@ char *type_name(Type type)
   return name;
 }
 
+uint32_t value_hash(Value val)
+{
+  uint32_t hash;
+  hash_init(&hash);
+  Type valType = type(val);
+  hash_update(&hash, (uint32_t) valType);
+  switch (valType)
+  {
+  case TYPE_UNDEFINED:
+    break;
+  case TYPE_BOOL:
+    hash_update(&hash, (uint32_t) as_bool(val));
+    break;
+  case TYPE_INT:
+    hash_update_int(&hash, as_int(val));
+    break;
+  case TYPE_STR:
+    hash_update(&hash, str_hash(as_str(val)));
+    break;
+  case TYPE_TUPLE:
+    hash_update(&hash, tuple_hash(as_tuple(val)));
+    break;
+  case TYPE_CLOSURE:
+    hash_update_pointer(&hash, as_closure(val));
+    break;
+  }
+  return hash;
+}
+
 bool value_equal(Value val1, Value val2)
 {
   if (type(val1) != type(val2))
     return false;
-  bool isEqual = false;
+  bool isEqual = true;
   switch (type(val1))
   {
+  case TYPE_UNDEFINED:
+    break;
   case TYPE_BOOL:
     isEqual = as_bool(val1) == as_bool(val2);
     break;
@@ -68,6 +103,8 @@ int value_compare(Value val1, Value val2, Result *result)
   int cmp = 0;
   switch (type(val1))
   {
+  case TYPE_UNDEFINED:
+    break;
   case TYPE_BOOL:
     cmp = as_bool(val1) - as_bool(val2);
     break;
@@ -89,6 +126,9 @@ void value_print(Value val)
 {
   switch (type(val))
   {
+  case TYPE_UNDEFINED:
+    printf("undefined");
+    break;
   case TYPE_BOOL:
     printf("%s", as_bool(val) ? "true" : "false");
     break;

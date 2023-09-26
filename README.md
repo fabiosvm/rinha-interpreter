@@ -16,6 +16,7 @@ A fim de priorizar velocidade de execução, sem perder a simplicidade na implem
 - Máquina Virtual baseada em pilha
 - Tagged unions (ou tagged pointer) para representar valores
 - Tail call dispatching (+ switch opcional)
+- Memorização em funções (opcional)
 
 ## Requisitos
 

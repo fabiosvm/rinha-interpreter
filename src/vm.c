@@ -7,10 +7,6 @@
 #include "str.h"
 #include "tuple.h"
 
-#ifndef TAIL_CALL_SWITCH
-#define TAIL_CALL_SWITCH 0
-#endif
-
 #if TAIL_CALL_SWITCH
 #define dispatch(vm, cl, ip, s, r) \
   do { \

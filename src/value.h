@@ -5,11 +5,8 @@
 #ifndef VALUE_H
 #define VALUE_H
 
+#include "common.h"
 #include "result.h"
-
-#ifndef TAGGED_POINTER
-#define TAGGED_POINTER 1
-#endif
 
 #if TAGGED_POINTER
 #include <stdint.h>

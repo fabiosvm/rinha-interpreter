@@ -553,14 +553,14 @@ static inline void compile_binary(Compiler *comp, Result *result)
     op = OP_EQ;
   else if (!strncmp(opcode, "Neq", 3))
     op = OP_NEQ;
-  else if (!strncmp(opcode, "Lt", 2))
-    op = OP_LT;
-  else if (!strncmp(opcode, "Gt", 2))
-    op = OP_GT;
   else if (!strncmp(opcode, "Lte", 3))
     op = OP_LTE;
+  else if (!strncmp(opcode, "Lt", 2))
+    op = OP_LT;
   else if (!strncmp(opcode, "Gte", 3))
     op = OP_GTE;
+  else if (!strncmp(opcode, "Gt", 2))
+    op = OP_GT;
   else if (!strncmp(opcode, "And", 3))
     op = OP_AND;
   else if (!strncmp(opcode, "Or", 2))

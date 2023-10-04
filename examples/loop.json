@@ -1,0 +1,212 @@
+{
+  "name": "examples/loop.rinha",
+  "expression": {
+    "kind": "Let",
+    "name": {
+      "text": "loop",
+      "location": {
+        "start": 4,
+        "end": 8,
+        "filename": "examples/loop.rinha"
+      }
+    },
+    "value": {
+      "kind": "Function",
+      "parameters": [
+        {
+          "text": "i",
+          "location": {
+            "start": 15,
+            "end": 16,
+            "filename": "examples/loop.rinha"
+          }
+        },
+        {
+          "text": "s",
+          "location": {
+            "start": 18,
+            "end": 19,
+            "filename": "examples/loop.rinha"
+          }
+        }
+      ],
+      "value": {
+        "kind": "If",
+        "condition": {
+          "kind": "Binary",
+          "lhs": {
+            "kind": "Var",
+            "text": "i",
+            "location": {
+              "start": 32,
+              "end": 33,
+              "filename": "examples/loop.rinha"
+            }
+          },
+          "op": "Eq",
+          "rhs": {
+            "kind": "Int",
+            "value": 0,
+            "location": {
+              "start": 37,
+              "end": 38,
+              "filename": "examples/loop.rinha"
+            }
+          },
+          "location": {
+            "start": 32,
+            "end": 38,
+            "filename": "examples/loop.rinha"
+          }
+        },
+        "then": {
+          "kind": "Var",
+          "text": "s",
+          "location": {
+            "start": 46,
+            "end": 47,
+            "filename": "examples/loop.rinha"
+          }
+        },
+        "otherwise": {
+          "kind": "Call",
+          "callee": {
+            "kind": "Var",
+            "text": "loop",
+            "location": {
+              "start": 63,
+              "end": 67,
+              "filename": "examples/loop.rinha"
+            }
+          },
+          "arguments": [
+            {
+              "kind": "Binary",
+              "lhs": {
+                "kind": "Var",
+                "text": "i",
+                "location": {
+                  "start": 68,
+                  "end": 69,
+                  "filename": "examples/loop.rinha"
+                }
+              },
+              "op": "Sub",
+              "rhs": {
+                "kind": "Int",
+                "value": 1,
+                "location": {
+                  "start": 70,
+                  "end": 71,
+                  "filename": "examples/loop.rinha"
+                }
+              },
+              "location": {
+                "start": 68,
+                "end": 71,
+                "filename": "examples/loop.rinha"
+              }
+            },
+            {
+              "kind": "Binary",
+              "lhs": {
+                "kind": "Var",
+                "text": "s",
+                "location": {
+                  "start": 73,
+                  "end": 74,
+                  "filename": "examples/loop.rinha"
+                }
+              },
+              "op": "Add",
+              "rhs": {
+                "kind": "Int",
+                "value": 1,
+                "location": {
+                  "start": 75,
+                  "end": 76,
+                  "filename": "examples/loop.rinha"
+                }
+              },
+              "location": {
+                "start": 73,
+                "end": 76,
+                "filename": "examples/loop.rinha"
+              }
+            }
+          ],
+          "location": {
+            "start": 63,
+            "end": 77,
+            "filename": "examples/loop.rinha"
+          }
+        },
+        "location": {
+          "start": 28,
+          "end": 81,
+          "filename": "examples/loop.rinha"
+        }
+      },
+      "location": {
+        "start": 11,
+        "end": 83,
+        "filename": "examples/loop.rinha"
+      }
+    },
+    "next": {
+      "kind": "Print",
+      "value": {
+        "kind": "Call",
+        "callee": {
+          "kind": "Var",
+          "text": "loop",
+          "location": {
+            "start": 91,
+            "end": 95,
+            "filename": "examples/loop.rinha"
+          }
+        },
+        "arguments": [
+          {
+            "kind": "Int",
+            "value": 2000000000,
+            "location": {
+              "start": 96,
+              "end": 106,
+              "filename": "examples/loop.rinha"
+            }
+          },
+          {
+            "kind": "Int",
+            "value": 0,
+            "location": {
+              "start": 108,
+              "end": 109,
+              "filename": "examples/loop.rinha"
+            }
+          }
+        ],
+        "location": {
+          "start": 91,
+          "end": 110,
+          "filename": "examples/loop.rinha"
+        }
+      },
+      "location": {
+        "start": 85,
+        "end": 111,
+        "filename": "examples/loop.rinha"
+      }
+    },
+    "location": {
+      "start": 0,
+      "end": 111,
+      "filename": "examples/loop.rinha"
+    }
+  },
+  "location": {
+    "start": 0,
+    "end": 111,
+    "filename": "examples/loop.rinha"
+  }
+}

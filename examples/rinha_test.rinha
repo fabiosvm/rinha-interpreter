@@ -1,0 +1,394 @@
+let _ = print("@!compile::");
+
+let fib_tail_rec = fn (i, n, a, b) => {
+  if (n == 0) {
+    let _ = print("@!hehe" + i + "::");
+    a
+  } else {
+    fib_tail_rec(i + 1, n - 1, b, a + b)
+  }
+};
+
+let fib = fn (n) => {
+  fib_tail_rec(0, n, 0, 1)
+};
+
+let cons = fn (value, next) => {
+  ((1, value), next)
+};
+
+let nil = ((0, 0), 0);
+
+let map = fn (list, f) => {
+  let tag  = first(first(list));
+  let val  = second(first(list));
+  let rest = second(list);
+  if (tag == 1) { // if (list is Cons)
+    let new_val = f(val);
+    let new_rest = map(rest, f);
+    cons(new_val, new_rest)
+  } else {
+    nil
+  }
+};
+
+let idx = fn (list, n) => {
+// this is a get function
+  let tag  = first(first(list));
+  let val  = second(first(list));
+  let rest = second(list);
+  if (tag == 1) { // if (list is Cons)
+    if (n == 0) {
+      val
+    } else {
+      idx(rest, n - 1)
+    }
+  } else {
+    0
+  }
+};
+
+let fold = fn (list, f, init) => {
+  let _ = print("hehe");
+  let tag  = first(first(list));
+  let val  = second(first(list));
+  let rest = second(list);
+  if (tag == 1) { // if (list is Cons)
+    let _ = print("hehe");
+    let new_init = f(init, val);
+    let new_rest = fold(rest, f, new_init);
+    new_rest
+  } else {
+    init
+  }
+};
+
+let filter = fn (list, f) => {
+  let tag  = first(first(list));
+  let val  = second(first(list));
+  let rest = second(list);
+  if (tag == 1) { // if (list is Cons)
+    let new_rest = filter(rest, f);
+    if (f(val)) {
+      cons(val, new_rest)
+    } else {
+      new_rest
+    }
+  } else {
+    nil
+  }
+};
+
+let list_to_string = fn (list) => {
+  let tag  = first(first(list));
+  let val  = second(first(list));
+  let rest = second(list);
+  if (tag == 1) { // if (list is Cons)
+    let rest_str = list_to_string(rest);
+    let str = val + " " + rest_str;
+    str
+  } else {
+    ""
+  }
+};
+
+let len = fn (list) => {
+  fold(list, fn (acc, next) => acc + 1, 0)
+};
+
+let append = fn (list1, list2) => {
+  let tag1  = first(first(list1));
+  let val1  = second(first(list1));
+  let rest1 = second(list1);
+  if (tag1 == 1) { // if (list1 is Cons)
+    let new_rest1 = append(rest1, list2);
+    cons(val1, new_rest1)
+  } else {
+    list2
+  }
+};
+
+let quicksort = fn (list) => {
+  let tag  = first(first(list));
+  let val  = second(first(list));
+  let rest = second(list);
+  if (tag == 1) { // if (list is Cons)
+    let less = filter(rest, fn (x) => x < val);
+    let more = filter(rest, fn (x) => x >= val);
+    let sorted_less = quicksort(less);
+    let sorted_more = quicksort(more);
+    let sorted_list = append(sorted_less, cons(val, sorted_more));
+    sorted_list
+  } else {
+    nil
+  }
+};
+
+let replicate = fn (n, x) => {
+  if (n == 0) {
+    nil
+  } else {
+    cons(x, replicate(n - 1, x))
+  }
+};
+
+let bottom_up_tree = fn (item, depth) => {
+  if (depth == 0) {
+    cons(item, nil)
+  } else {
+    let new_depth = depth - 1;
+    let new_item = item * 2;
+    let lhs = bottom_up_tree(new_item - 1, new_depth);
+    let rhs = bottom_up_tree(new_item, new_depth);
+    cons(item, cons(lhs, cons(rhs, nil)))
+  }
+};
+
+let item_check = fn (tree) => {
+  let item = idx(tree, 0);
+  let lhs  = idx(tree, 1);
+  if (len(tree) < 3) {
+    1
+  } else {
+    let rhs = idx(tree, 2);
+    1 + item_check(lhs) + item_check(rhs)
+  }
+};
+
+let pow = fn (x, y) => {
+  if (y == 0) {
+    1
+  } else {
+    x * pow(x, y - 1)
+  }
+};
+
+let test_dead_code = fn () => {
+  let _ = print("dead code");
+  let _ = 30 + 493985 + 4;
+  let _ = 429457395 * 4;
+  let _ = 32425 * pow(20, 10);
+  let _ = replicate(100, pow(10, 2));
+  let _ = replicate(30, pow(14, 2));
+  let _ = replicate(45, pow(35, 2));
+  let _ = replicate(52, pow(10, 2));
+  let _ = replicate(69, pow(1, 2));
+  let _ = replicate(69, pow(10, 2));
+  let _ = replicate(39, pow(3, 2));
+  let _ = replicate(69, pow(10, 2));
+  let _ = replicate(59, pow(10, 2));
+  let _ = replicate(69, pow(8, 2));
+  let _ = replicate(61, pow(10, 2));
+  let _ = replicate(98, pow(10, 2));
+  let _ = replicate(60, pow(9, 2));
+  let _ = append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)));
+  let _ = append(append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2))), append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2))));
+  let x = append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)));
+  let _ = map(x, fn (x) => x * 2);
+  let _ = print("some_list => " + list_to_string(replicate(10, pow(3, 3))));
+  let _ = map(x, fn (x) => x * 2);
+  let _ = append(append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))), append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))));
+  let _ = append(append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))), append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))));
+  let _ = append(append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))), append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))));
+  let y = replicate(30, pow(14, 2));
+  let g = replicate(45, pow(35, 2));
+  let _ = replicate(52, pow(10, 2));
+  let sim = replicate(100, pow(10, 2));
+  let _ = append(append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))), append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))));
+  let _ = append(append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))), append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))));
+  let _ = append(append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))), append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))));
+  let _ = append(append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))), append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))));
+  let _ = append(sim, map(y, fn (x) => pow(x, 2)));
+  let _ = print("some_list => " + list_to_string(replicate(10, pow(3, 3))));
+  let _ = map(x, fn (x) => x * 2);
+  let _ = append(append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))), append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))));
+  let _ = append(append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))), append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))));
+  let _ = append(append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))), append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))));
+  let _ = print("@!dead_code::");
+  let _ = append(append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))), append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))));
+  let _ = append(append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))), append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))));
+  let _ = append(sim, map(y, fn (x) => pow(x, 2)));
+  let _ = replicate(52, pow(10, 2));
+  let _ = replicate(69, pow(1, 2));
+  let _ = replicate(69, pow(10, 2));
+  let _ = replicate(39, pow(3, 2));
+  let _ = replicate(69, pow(10, 2));
+  let _ = append(append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))), append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))));
+  let _ = append(append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))), append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))));
+  let _ = append(append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))), append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))));
+  let _ = append(sim, map(y, fn (x) => pow(x, 2)));
+  let _ = print("dead code");
+  let _ = 30 + 493985 + 4;
+  let _ = append(append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))), append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))));
+  let _ = append(g, map(y, fn (x) => pow(x, 2)));
+  let _ = replicate(100, pow(10, 2));
+  let _ = append(append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))), append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))));
+  let _ = append(append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))), append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))));
+  let _ = append(append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))), append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))));
+  let _ = append(append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))), append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))));
+  let _ = append(sim, map(y, fn (x) => pow(x, 2)));
+  let _ = print("some_list => " + list_to_string(replicate(10, pow(3, 3))));
+  let _ = map(x, fn (x) => x * 2);
+  let _ = append(append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))), append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))));
+  let _ = append(append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))), append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))));
+  let _ = append(append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))), append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))));
+  let _ = append(append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))), append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))));
+  let _ = append(append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))), append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))));
+  let _ = append(g, map(y, fn (x) => pow(x, 2)));
+  let _ = append(append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))), append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))));
+  let _ = append(append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))), append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))));
+  let _ = append(append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))), append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))));
+  let _ = append(g, map(y, fn (x) => pow(x, 2)));
+  let _ = append(sim, map(y, fn (x) => pow(x, 2)));
+  let _ = print("some_list => " + list_to_string(replicate(10, pow(3, 3))));
+  let _ = map(x, fn (x) => x * 2);
+  let _ = append(append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))), append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))));
+  let _ = append(append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))), append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))));
+  let _ = append(append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))), append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))));
+  let _ = replicate(30, pow(14, 2));
+  let _ = replicate(45, pow(35, 2));
+  let _ = replicate(52, pow(10, 2));
+  let _ = replicate(100, pow(10, 2));
+  let _ = append(append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))), append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))));
+  let _ = append(append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))), append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))));
+  let _ = append(append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))), append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))));
+  let _ = append(append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))), append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))));
+  let _ = append(g, map(y, fn (x) => pow(x, 2)));
+  let _ = append(sim, map(y, fn (x) => pow(x, 2)));
+  let _ = print("some_list => " + list_to_string(replicate(10, pow(3, 3))));
+  let _ = map(x, fn (x) => x * 2);
+  let _ = append(append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))), append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))));
+  let _ = append(append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))), append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))));
+  let _ = append(append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))), append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))));
+  let _ = append(g, map(y, fn (x) => pow(x, 2)));
+  let _ = append(append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))), append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))));
+  let _ = append(append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))), append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))));
+  let _ = append(g, map(y, fn (x) => pow(x, 2)));
+  let _ = append(sim, map(y, fn (x) => pow(x, 2)));
+  let _ = print("some_list => " + list_to_string(replicate(10, pow(3, 3))));
+  let _ = map(x, fn (x) => x * 2);
+  let _ = append(append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))), append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))));
+  let _ = append(append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))), append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))));
+  let _ = append(append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))), append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))));
+  let _ = append(g, map(y, fn (x) => pow(x, 2)));
+  let _ = append(append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))), append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))));
+  let _ = append(append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))), append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))));
+  let _ = append(g, map(y, fn (x) => pow(x, 2)));
+  let _ = append(sim, map(y, fn (x) => pow(x, 2)));
+  let _ = print("some_list => " + list_to_string(replicate(10, pow(3, 3))));
+  let _ = map(x, fn (x) => x * 2);
+  let _ = append(append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))), append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))));
+  let _ = append(append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))), append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))));
+  let _ = print("@!dead_code::");
+  let _ = append(append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))), append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))));
+  let _ = print("some_list => " + list_to_string(replicate(10, pow(3, 3))));
+  let _ = map(x, fn (x) => x * 2);
+  let _ = append(append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))), append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))));
+  let _ = append(append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))), append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))));
+  let _ = append(append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))), append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))));
+  let _ = append(g, map(y, fn (x) => pow(x, 2)));
+  let _ = append(append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))), append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))));
+  let _ = append(append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))), append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))));
+  let _ = append(g, map(y, fn (x) => pow(x, 2)));
+  let _ = append(sim, map(y, fn (x) => pow(x, 2)));
+  let _ = print("some_list => " + list_to_string(replicate(10, pow(3, 3))));
+  let _ = map(x, fn (x) => x * 2);
+  let _ = append(append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))), append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))));
+  let _ = append(append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))), append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))));
+  let _ = append(append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))), append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))));
+  let _ = append(g, map(y, fn (x) => pow(x, 2)));
+  let _ = append(append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))), append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))));
+  let _ = append(append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))), append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))));
+  let _ = append(g, map(y, fn (x) => pow(x, 2)));
+  let _ = append(sim, map(y, fn (x) => pow(x, 2)));
+  let _ = print("some_list => " + list_to_string(replicate(10, pow(3, 3))));
+  let _ = map(x, fn (x) => x * 2);
+  let _ = append(append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))), append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))));
+  let _ = append(append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))), append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))));
+  let _ = append(append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))), append(x, append(replicate(60, pow(10, 2)), replicate(60, pow(10, 2)))));
+  let _ = append(g, map(y, fn (x) => pow(x, 2)));
+  let _ = append(sim, map(y, fn (x) => pow(x, 2)));
+  pow(2, pow(2, 2))
+};
+
+let dynamic_typing_test = fn (x, y, z) => {
+  let _ = print("dynamic_typing_test print 1");
+  if (((x + z) % 2) == 0) {
+    let _ = print("dynamic_typing_test print 2");
+    "it's a string"
+  } else {
+    if (z * x > y) {
+      let _ = print("dynamic_typing_test print 3");
+      1
+    } else {
+      let _ = print("dynamic_typing_test print 4");
+      2039
+    }
+  }
+};
+
+let dynamic_list_test = fn () => {
+  let dyn_list_1 = replicate(100, dynamic_typing_test(19, 210, 304));
+  let dyn_list_2 = fold(dyn_list_1, fn (acc, next) => {
+    let _ = print("dynamic_list_test print 1");
+    let _ = dynamic_typing_test(423, 230, 4);
+    acc * acc
+  }, 4);
+  print("@!dynamic_list_test_print_2::")
+};
+
+// fibonacci simple test
+let fib1          = fib(1);
+let fib5          = fib(5);
+let fib10         = fib(10);
+let fibx          = print("@!fib::" + fib(45));
+
+// map simple test
+let base_list     = cons(1, cons(2, cons(3, cons(4, cons(5, cons(6, cons(7, cons(8, cons(9, cons(10, cons(11, cons(12, cons(13, cons(14, cons(15, cons(16, nil))))))))))))))));
+let append_list   = append(base_list, append(base_list, map(base_list, fn (x) => x * 4)));
+let list          = append(append_list, replicate(100, 1));
+let map_list      = map(list, fn (x) => x * 2);
+let _             = print("@!to_string::" + list_to_string(map_list));
+let _             = print("@!fold::" +  fold(map_list, fn (x, y) => x + y, 0));
+let _             = print("@!filter::" + list_to_string(filter(list, fn (x) => x > 2)));
+let _             = print("@!append::" + list_to_string(append(map_list, list)));
+let _             = print("@!quicksort::" + list_to_string(quicksort(append(map_list, list))));
+let _             = print("@!idx::" + idx(list, 0));
+let _             = print("@!map_run::");
+
+// binary-trees
+let max_depth     = 14;
+let min_depth     = 4;
+let stretch_depth = max_depth + 1;
+let _             = print("stretch_depth  = " + stretch_depth);
+let stretch_tree  = bottom_up_tree(0, stretch_depth);
+let _             = map(replicate(max_depth, 1), fn (x) => {
+  let iterations = pow(2, max_depth - x + min_depth);
+  let check = fold(replicate(iterations, 0), fn (acc, next) => {
+    let tree = bottom_up_tree(x, x);
+    let sum = item_check(tree);
+    acc + sum
+  }, 0);
+  print("check(" + iterations + ") = " + check)
+});
+let _             = print("@!binary_trees::");
+
+// dead code test
+let _             = test_dead_code();
+let _             = print("@!dead_code_test::");
+
+// dynamic typing test
+let _             = print("@!dynamic_typing_run1::" + dynamic_typing_test(19, 210, 304));
+let _             = print("@!dynamic_typing_run2::" + dynamic_typing_test(423, 230, 4));
+let _             = print("@!dynamic_typing_run3::" + dynamic_typing_test(19, 210, 304));
+let _             = print("@!dynamic_typing_run4::" + dynamic_typing_test(423, 230, 4));
+let _             = print("@!dynamic_typing_run5::" + dynamic_typing_test(44, 422, 5));
+let _             = print("@!dynamic_typing_run6::" + dynamic_typing_test(33, 210, 55));
+
+// dynamic list test
+let _             = dynamic_list_test();
+let _             = print("@!dynamic_list_run::");
+
+// fibonacci recursive test
+// let fib_rec_test  = print("@!fib_rec::" + fib(100000));
+0

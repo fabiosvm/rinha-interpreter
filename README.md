@@ -5,8 +5,6 @@ Esse projeto é um interpretador para a AST gerada pelo compilador [https://gith
 
 Muito da implementação desse projeto foi baseada no livro [Crafting Interpreters](https://craftinginterpreters.com), de Bob Nystrom.
 
-> **Aviso:** Esse projeto é um trabalho em andamento. No momento, o interpretador apenas verifica a sintaxe do programa e gera o bytecode correspondente. A máquina virtual ainda não foi implementada.
-
 ## Estratégias de implementação
 
 A fim de priorizar velocidade de execução, sem perder a simplicidade na implementação, o interpretador usará o seguinte:
